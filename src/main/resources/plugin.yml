@@ -1,0 +1,13 @@
+name: spider
+version: 1.0
+main: io.github.shiryu.spider.SpiderPlugin
+api-version: 1.19
+author: shiryu
+description: "Useful utilities combined"
+
+libraries:
+  - "org.apache.commons:commons-lang3:3.12.0"
+  - "com.github.ben-manes.caffeine:caffeine:3.1.3"
+  - "com.zaxxer:HikariCP:4.0.3"
+
+commands:
