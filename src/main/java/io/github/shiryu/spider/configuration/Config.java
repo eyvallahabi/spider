@@ -7,7 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public interface Config {
 
@@ -16,6 +18,9 @@ public interface Config {
 
     @NotNull
     String getPath();
+
+    @NotNull
+    File getFile();
 
     @NotNull
     <T> Optional<T> get(@NotNull final String path);
@@ -41,7 +46,16 @@ public interface Config {
     }
 
     @NotNull
+    Optional<Config> findFile(@NotNull final String name);
+
+    void forEach(@NotNull final String path, @NotNull final Consumer<Config> consumer);
+
+    @NotNull
     Optional<ConfigSection> getSection(@NotNull final String path);
 
     <T> void set(@NotNull final String path, @NotNull final T object);
+
+    void load();
+
+    void save();
 }
