@@ -90,7 +90,7 @@ public class YamlConfig implements Config {
     }
 
     @Override
-    public void forEach(@NotNull final String path, @NotNull final Consumer<Config> consumer){
+    public void forEachFile(@NotNull final String path, @NotNull final Consumer<Config> consumer){
         if (this.file == null || this.file.listFiles() == null) return;
 
         for (File file : this.file.listFiles())

@@ -4,7 +4,6 @@ import io.github.shiryu.spider.configuration.Config;
 import io.github.shiryu.spider.configuration.ConfigValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,12 +21,16 @@ public class BasicValue<T> implements ConfigValue<T> {
     }
 
     @Override
-    public void load(@NotNull Config config) {
+    public ConfigValue<T> load(@NotNull Config config) {
         this.value = config.getOrSet(this.path, this.value);
+
+        return this;
     }
 
     @Override
-    public void save(@NotNull Config config) {
+    public ConfigValue<T> save(@NotNull Config config) {
         config.set(this.path, this.value);
+
+        return this;
     }
 }
