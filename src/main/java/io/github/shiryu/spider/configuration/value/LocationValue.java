@@ -23,17 +23,21 @@ public class LocationValue implements ConfigValue<Location> {
     }
 
     @Override
-    public void load(@NotNull final Config config) {
+    public ConfigValue<Location> load(@NotNull final Config config) {
         config.set(
                 this.path,
                 SpiderLocation.from(this.value)
                         .locationToString()
         );
+
+        return this;
     }
 
     @Override
-    public void save(@NotNull final Config config) {
+    public ConfigValue<Location> save(@NotNull final Config config) {
         this.value = SpiderLocation.from(config.getOrSet(this.path, ""))
                 .getBukkitLocation();
+
+        return this;
     }
 }

@@ -48,7 +48,7 @@ public interface Config {
     @NotNull
     Optional<Config> findFile(@NotNull final String name);
 
-    void forEach(@NotNull final String path, @NotNull final Consumer<Config> consumer);
+    void forEachFile(@NotNull final String path, @NotNull final Consumer<Config> consumer);
 
     @NotNull
     Optional<ConfigSection> getSection(@NotNull final String path);

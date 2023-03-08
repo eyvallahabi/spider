@@ -34,7 +34,7 @@ public class ItemValue implements ConfigValue<ItemStack> {
     }
 
     @Override
-    public void load(@NotNull Config config) {
+    public ConfigValue<ItemStack> load(@NotNull Config config) {
         final XMaterial material = XMaterial.matchXMaterial(config.getOrSet(path + ".material", "PAPER")).get();
         final String name = config.getOrSet(path + ".name", "");
         final int amount = config.getOrSet(path + ".amount", 1);
@@ -107,10 +107,12 @@ public class ItemValue implements ConfigValue<ItemStack> {
                 );
 
         this.value = item.get();
+
+        return this;
     }
 
     @Override
-    public void save(@NotNull Config config) {
+    public ConfigValue<ItemStack>  save(@NotNull Config config) {
         final XMaterial material = XMaterial.matchXMaterial(this.value.getType());
 
         config.set(this.path + ".material", material.name());
@@ -155,5 +157,7 @@ public class ItemValue implements ConfigValue<ItemStack> {
                 id.incrementAndGet();
             });
         }
+
+        return this;
     }
 }

@@ -54,6 +54,11 @@ public class YamlSection implements ConfigSection {
     }
 
     @Override
+    public void forEach(@NotNull Consumer<String> consumer) {
+
+    }
+
+    @Override
     public <T> void set(@NotNull String path, @NotNull T object) {
         section.set(path, object);
     }
@@ -90,7 +95,7 @@ public class YamlSection implements ConfigSection {
 
 
     @Override
-    public void forEach(@NotNull String path, @NotNull Consumer<Config> consumer) {
+    public void forEachFile(@NotNull String path, @NotNull Consumer<Config> consumer) {
 
     }
 }

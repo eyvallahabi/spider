@@ -10,7 +10,7 @@ public interface ConfigValue<T> {
     @NotNull
     T getValue();
 
-    void load(@NotNull final Config config);
+    ConfigValue<T> load(@NotNull final Config config);
 
-    void save(@NotNull final Config config);
+    ConfigValue<T> save(@NotNull final Config config);
 }

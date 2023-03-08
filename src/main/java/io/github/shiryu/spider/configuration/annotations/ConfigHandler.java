@@ -2,7 +2,7 @@ package io.github.shiryu.spider.configuration.annotations;
 
 import org.jetbrains.annotations.NotNull;
 
-public @interface Config {
+public @interface ConfigHandler {
 
     @NotNull
     String name();

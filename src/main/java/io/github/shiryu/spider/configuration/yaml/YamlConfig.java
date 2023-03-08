@@ -3,8 +3,10 @@ package io.github.shiryu.spider.configuration.yaml;
 import io.github.shiryu.spider.configuration.Config;
 import io.github.shiryu.spider.configuration.ConfigSection;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @Getter
+@RequiredArgsConstructor
 public class YamlConfig implements Config {
 
     private final String name;
@@ -25,9 +28,8 @@ public class YamlConfig implements Config {
     private YamlConfiguration configuration;
     private Plugin plugin;
 
-    public YamlConfig(@NotNull final String name, @NotNull final String path){
-        this.name = name;
-        this.path = path;
+    public YamlConfig(@NotNull final String name){
+        this(name, "");
     }
 
     @Override
