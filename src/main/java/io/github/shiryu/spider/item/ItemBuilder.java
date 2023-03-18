@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.util.item;
+package io.github.shiryu.spider.item;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.shiryu.spider.util.Colored;

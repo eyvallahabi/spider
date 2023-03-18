@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.util.location;
+package io.github.shiryu.spider.location;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -142,6 +142,7 @@ public class SpiderLocation {
                 .replace(".", "_");
     }
 
+    @NotNull
     public Location getBukkitLocation() {
         return new Location(
                 this.getBukkitWorld(),
@@ -177,4 +178,5 @@ public class SpiderLocation {
                 .append("world", this.world)
                 .toString();
     }
+
 }
