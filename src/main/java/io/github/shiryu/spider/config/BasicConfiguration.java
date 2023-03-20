@@ -1,12 +1,9 @@
 package io.github.shiryu.spider.config;
 
-import com.cryptomorin.xseries.XMaterial;
 import io.github.shiryu.spider.config.serializer.ConfigSerializer;
-import io.github.shiryu.spider.item.ItemBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

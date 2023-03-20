@@ -2,7 +2,7 @@ package io.github.shiryu.spider.config.serializer.impl;
 
 import io.github.shiryu.spider.config.BasicConfiguration;
 import io.github.shiryu.spider.config.serializer.ConfigSerializer;
-import io.github.shiryu.spider.location.SpiderLocation;
+import io.github.shiryu.spider.util.location.SpiderLocation;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 

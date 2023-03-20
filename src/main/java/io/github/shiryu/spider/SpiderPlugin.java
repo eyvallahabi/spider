@@ -1,7 +1,7 @@
 package io.github.shiryu.spider;
 
 import com.google.gson.Gson;
-import io.github.shiryu.spider.location.gson.LocationTypeFactory;
+import io.github.shiryu.spider.util.location.gson.LocationTypeFactory;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 

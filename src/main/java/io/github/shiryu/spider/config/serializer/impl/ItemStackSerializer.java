@@ -3,7 +3,7 @@ package io.github.shiryu.spider.config.serializer.impl;
 import com.cryptomorin.xseries.XMaterial;
 import io.github.shiryu.spider.config.BasicConfiguration;
 import io.github.shiryu.spider.config.serializer.ConfigSerializer;
-import io.github.shiryu.spider.item.ItemBuilder;
+import io.github.shiryu.spider.util.item.ItemBuilder;
 import org.bukkit.Color;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;

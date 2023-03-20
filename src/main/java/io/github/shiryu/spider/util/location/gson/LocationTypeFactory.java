@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.location.gson;
+package io.github.shiryu.spider.util.location.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -7,7 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.github.shiryu.spider.SpiderPlugin;
-import io.github.shiryu.spider.location.SpiderLocation;
+import io.github.shiryu.spider.util.location.SpiderLocation;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.location;
+package io.github.shiryu.spider.util.location;
 
 import io.github.shiryu.spider.util.functional.MergedBoolean;
 import lombok.AllArgsConstructor;

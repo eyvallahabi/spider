@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.location;
+package io.github.shiryu.spider.util.location;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
