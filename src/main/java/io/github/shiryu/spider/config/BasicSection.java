@@ -1,5 +1,6 @@
 package io.github.shiryu.spider.config;
 
+import io.github.shiryu.spider.config.serializer.ConfigSerializer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -23,12 +24,12 @@ public class BasicSection {
         this.configuration.save();
     }
 
-    public Optional<BasicSection> getSection(@NotNull final String path){
-        return configuration.getSection(path);
+    public <T> void set(@NotNull final String path, @NotNull final T object, @NotNull final ConfigSerializer<T> serializer){
+        serializer.write(this.configuration, object, path);
     }
 
-    public ItemStack getItemStack(@NotNull final String path){
-        return this.configuration.getItemStack(this.section.getName() + "." + path);
+    public Optional<BasicSection> getSection(@NotNull final String path){
+        return configuration.getSection(path);
     }
 
     public <T> Optional<T> get(@NotNull final String path){
@@ -37,6 +38,11 @@ public class BasicSection {
         return Optional.ofNullable(
                 (T) this.section.get(path)
         );
+    }
+
+    @NotNull
+    public <T> T get(@NotNull final String path, @NotNull final ConfigSerializer<T> serializer){
+        return serializer.read(this.configuration, path);
     }
 
     public <T> T getOrSet(@NotNull final String path, @NotNull final T fallback){

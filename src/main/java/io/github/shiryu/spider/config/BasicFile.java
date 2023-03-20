@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 
 public class BasicFile {
 
-
     private final String name;
     private final String path;
 
