@@ -1,9 +1,8 @@
-package io.github.shiryu.spider.storage.sql.type;
+package io.github.shiryu.spider.storage.impl.sql.connection;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.shiryu.spider.storage.sql.SQLConnection;
-import io.github.shiryu.spider.storage.sql.credentials.SQLiteCredentials;
+import io.github.shiryu.spider.storage.impl.sql.SQLConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +11,10 @@ import javax.sql.DataSource;
 
 @Getter
 @RequiredArgsConstructor
-public class SQLiteConnection implements SQLConnection{
+public class SQLiteConnection implements SQLConnection {
 
-    private final SQLiteCredentials credentials;
+    private final String pool;
+    private final String path;
 
     private DataSource source;
 
@@ -38,8 +38,8 @@ public class SQLiteConnection implements SQLConnection{
     @Override
     public void connect() {
         this.source = this.create(
-                this.credentials.getPool(),
-                this.credentials.getPath()
+                this.pool,
+                this.path
         );
     }
 }

@@ -1,6 +1,5 @@
-package io.github.shiryu.spider.storage.sql;
+package io.github.shiryu.spider.storage.impl.sql;
 
-import io.github.shiryu.spider.storage.StorageExecutor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -18,9 +17,13 @@ import java.util.stream.IntStream;
 
 @Getter
 @RequiredArgsConstructor
-public class SQLExecutor implements StorageExecutor {
+public class SQLExecutor {
 
     private final SQLConnection connection;
+
+    public static SQLExecutor create(@NotNull final SQLConnection connection){
+        return new SQLExecutor(connection);
+    }
 
     public void createTable(@NotNull final String table, @NotNull final String key,
                             @NotNull final Object object) {

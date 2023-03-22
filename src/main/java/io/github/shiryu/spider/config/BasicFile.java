@@ -23,6 +23,10 @@ public class BasicFile {
         this.path = path;
     }
 
+    public BasicFile(@NotNull final String name){
+        this(name, "");
+    }
+
     public void delete(){
         this.file.delete();
     }
@@ -71,6 +75,9 @@ public class BasicFile {
             return this;
         }
 
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdir();
+
         if (file.exists()){
             config().load();
 
@@ -85,9 +92,6 @@ public class BasicFile {
 
             return this;
         }
-
-        if (!file.getParentFile().exists())
-            file.getParentFile().mkdir();
 
         try {
             file.createNewFile();

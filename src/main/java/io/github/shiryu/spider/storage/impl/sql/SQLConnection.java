@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.storage.sql;
+package io.github.shiryu.spider.storage.impl.sql;
 
 import io.github.shiryu.spider.storage.StorageConnection;
 import org.jetbrains.annotations.NotNull;

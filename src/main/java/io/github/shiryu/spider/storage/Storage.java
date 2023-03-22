@@ -2,15 +2,10 @@ package io.github.shiryu.spider.storage;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Storage<E extends StorageExecutor> {
+import java.util.Optional;
+
+public interface Storage<I, T> {
 
     @NotNull
-    StorageConnection getConnection();
-
-    @NotNull
-    E getExecutor();
-
-    default void connect(){
-        this.getConnection().connect();
-    }
+    public Optional<T> load(@NotNull final I id);
 }

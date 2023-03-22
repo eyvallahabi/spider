@@ -1,9 +1,8 @@
-package io.github.shiryu.spider.storage.sql.type;
+package io.github.shiryu.spider.storage.impl.sql.connection;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.shiryu.spider.storage.sql.SQLConnection;
-import io.github.shiryu.spider.storage.sql.credentials.MySQLCredentials;
+import io.github.shiryu.spider.storage.impl.sql.SQLConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,13 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 public class MySQLConnection implements SQLConnection {
 
-    private final MySQLCredentials credentials;
+    private final String host;
+    private final String username;
+    private final String password;
+
+    private final String database;
+
+    private final int port;
 
     private DataSource source;
 
@@ -54,11 +59,11 @@ public class MySQLConnection implements SQLConnection {
 
     private DataSource create(final boolean legacy){
         return this.create(
-                this.credentials.getHost(),
-                this.credentials.getPort(),
-                this.credentials.getDatabase(),
-                this.credentials.getUsername(),
-                this.credentials.getPassword(),
+                this.host,
+                this.port,
+                this.database,
+                this.username,
+                this.password,
                 legacy
         );
     }
