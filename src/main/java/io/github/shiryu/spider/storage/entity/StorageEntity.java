@@ -34,6 +34,9 @@ public class StorageEntity {
             return;
 
         for (final Field field : clazz.getDeclaredFields()){
+            if (field.getName().contains("this"))
+                continue;
+
             field.setAccessible(true);
 
             final EntityParameter parameter = new EntityParameter(field.getName(), field.getType());
@@ -50,9 +53,11 @@ public class StorageEntity {
 
             if (field.isAnnotationPresent(Id.class)) {
                 this.id = parameter;
-            }else{
-                this.parameters.add(parameter);
             }
+
+            this.parameters.add(parameter);
+
+            field.setAccessible(false);
         }
     }
 

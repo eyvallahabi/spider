@@ -1,8 +1,11 @@
 package io.github.shiryu.spider;
 
 import com.google.gson.Gson;
+import io.github.shiryu.spider.storage.annotations.Entity;
+import io.github.shiryu.spider.storage.entity.StorageEntity;
 import io.github.shiryu.spider.util.location.gson.LocationTypeFactory;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
