@@ -1,6 +1,6 @@
-package io.github.shiryu.spider.storage.impl.mongo;
+package io.github.shiryu.spider.storage.connection.mongo;
 
-import io.github.shiryu.spider.storage.StorageConnection;
+import io.github.shiryu.spider.storage.connection.StorageConnection;
 
 public class MongoConnection implements StorageConnection {
 

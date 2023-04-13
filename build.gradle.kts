@@ -41,6 +41,7 @@ dependencies {
     compileOnly("org.apache.commons:commons-lang3:3.12.0")
     compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.3")
     compileOnly("com.zaxxer:HikariCP:4.0.3")
+    compileOnly("org.mongodb:mongo-java-driver:3.12.12")
 
     compileOnly("org.projectlombok:lombok:1.18.24")
     compileOnly("org.jetbrains:annotations:24.0.0")

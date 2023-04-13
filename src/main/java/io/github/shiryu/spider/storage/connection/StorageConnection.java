@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.storage;
+package io.github.shiryu.spider.storage.connection;
 
 public interface StorageConnection {
 

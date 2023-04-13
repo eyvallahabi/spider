@@ -69,7 +69,7 @@ public class BasicConfiguration {
 
         T value = (T) this.configuration.get(path);
 
-        if (value == null) return null;
+        if (value == null) return Optional.empty();
 
         return Optional.ofNullable(value);
     }

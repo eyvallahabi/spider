@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.storage.entity.parameter;
+package io.github.shiryu.spider.storage.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

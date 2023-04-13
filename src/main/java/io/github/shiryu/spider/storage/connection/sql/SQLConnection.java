@@ -1,6 +1,6 @@
-package io.github.shiryu.spider.storage.impl.sql;
+package io.github.shiryu.spider.storage.connection.sql;
 
-import io.github.shiryu.spider.storage.StorageConnection;
+import io.github.shiryu.spider.storage.connection.StorageConnection;
 import org.jetbrains.annotations.NotNull;
 
 import javax.sql.DataSource;

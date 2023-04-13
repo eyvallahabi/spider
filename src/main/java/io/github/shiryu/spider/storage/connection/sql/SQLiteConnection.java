@@ -1,8 +1,7 @@
-package io.github.shiryu.spider.storage.impl.sql.connection;
+package io.github.shiryu.spider.storage.connection.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.shiryu.spider.storage.impl.sql.SQLConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

@@ -2,26 +2,25 @@ package io.github.shiryu.spider.storage.entity;
 
 import io.github.shiryu.spider.storage.annotations.Entity;
 import io.github.shiryu.spider.storage.annotations.Id;
-import io.github.shiryu.spider.storage.entity.parameter.EntityParameter;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class StorageEntity {
+@Setter
+public class SimpleEntity {
 
     private final Object parent;
 
     private EntityParameter id;
 
-    private final List<EntityParameter> parameters = new ArrayList<>();
+    private List<EntityParameter> parameters = new ArrayList<>();
 
-    public StorageEntity(@NotNull final Object parent){
+    public SimpleEntity(@NotNull final Object parent){
         this.parent = parent;
 
         this.init();
@@ -61,11 +60,4 @@ public class StorageEntity {
         }
     }
 
-    @Nullable
-    public <T> EntityParameter<T> getParameter(@NotNull final String id, @NotNull final Class<T> clazz){
-        return this.parameters.stream()
-                .filter(parameter -> parameter.getId().equals(id) && parameter.getType().equals(clazz))
-                .findFirst()
-                .orElse(null);
-    }
 }
