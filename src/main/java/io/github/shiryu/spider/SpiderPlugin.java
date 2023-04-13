@@ -1,6 +1,8 @@
 package io.github.shiryu.spider;
 
 import com.google.gson.Gson;
+import io.github.shiryu.spider.event.listener.ArmorListener;
+import io.github.shiryu.spider.util.Listeners;
 import io.github.shiryu.spider.util.location.gson.LocationTypeFactory;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +23,11 @@ public class SpiderPlugin extends JavaPlugin {
                 .newBuilder()
                 .registerTypeAdapterFactory(new LocationTypeFactory())
                 .create();
+
+        Listeners.register(
+                this,
+                new ArmorListener()
+        );
     }
 
     @Override
