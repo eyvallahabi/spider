@@ -38,6 +38,8 @@ dependencies {
 
     implementation("com.github.cryptomorin:XSeries:9.3.0") { isTransitive = false }
 
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+
     compileOnly("org.apache.commons:commons-lang3:3.12.0")
     compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.3")
     compileOnly("com.zaxxer:HikariCP:4.0.3")
