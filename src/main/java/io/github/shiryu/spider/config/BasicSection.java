@@ -2,7 +2,6 @@ package io.github.shiryu.spider.config;
 
 import io.github.shiryu.spider.config.serializer.ConfigSerializer;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

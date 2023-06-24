@@ -1,5 +1,6 @@
 package io.github.shiryu.spider.util.location;
 
+import io.github.shiryu.spider.util.Log;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 
@@ -152,9 +154,15 @@ public class SpiderLocation {
     }
 
     public World getBukkitWorld() {
-        return Optional.ofNullable(Bukkit.getWorld(this.world))
-                .orElse(Bukkit.getWorld("world"));
+        final World world = Bukkit.getWorld(this.world);
+
+        if (world != null)
+            return world;
+
+        return WorldCreator.name(this.world)
+                .createWorld();
     }
+
 
     @Override
     public boolean equals(@NotNull final Object object) {

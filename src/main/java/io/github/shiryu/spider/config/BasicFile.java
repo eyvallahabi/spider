@@ -1,10 +1,12 @@
 package io.github.shiryu.spider.config;
 
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -69,6 +71,12 @@ public class BasicFile {
 
         this.file = new File(plugin.getDataFolder().getAbsolutePath() + "/" + this.path +  this.name + "/");
 
+        if (file.exists()){
+            config().load();
+
+            return this;
+        }
+
         if (mkdir && !file.exists()){
             file.mkdirs();
 
@@ -78,17 +86,20 @@ public class BasicFile {
         if (!file.getParentFile().exists())
             file.getParentFile().mkdir();
 
-        if (file.exists()){
-            config().load();
-
-            return this;
-        }
 
         if (this.loadDefaults && !file.exists()){
-            copy(
-                    plugin.getResource(this.name),
-                    this.file
-            );
+            if (this.path.isEmpty()){
+                copy(
+                        plugin.getResource(this.name),
+                        this.file
+                );
+            }else{
+                copy(
+                        plugin.getResource(this.path.replaceAll("/", "") + "/" + this.name),
+                        this.file
+                );
+            }
+
 
             return this;
         }

@@ -71,6 +71,6 @@ public class MySQLConnection implements SQLConnection {
     public void connect() {
         //TODO ADD LEGACY
 
-        this.create(false);
+        this.source = this.create(false);
     }
 }
