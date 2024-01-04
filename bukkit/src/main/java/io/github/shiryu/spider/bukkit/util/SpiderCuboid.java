@@ -1,6 +1,6 @@
 package io.github.shiryu.spider.bukkit.util;
 
-import io.github.shiryu.spider.util.functional.MergedBoolean;
+import io.github.shiryu.spider.api.common.functional.MergedBoolean;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;

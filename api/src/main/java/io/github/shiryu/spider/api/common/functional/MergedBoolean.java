@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.bukkit.util;
+package io.github.shiryu.spider.api.common.functional;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,5 @@
 package io.github.shiryu.spider.bukkit.util;
 
-import io.github.shiryu.spider.util.Log;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

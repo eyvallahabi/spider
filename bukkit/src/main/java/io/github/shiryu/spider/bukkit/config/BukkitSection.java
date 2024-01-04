@@ -45,7 +45,7 @@ public class BukkitSection implements Section {
     }
 
     @Override
-    public @NotNull <T> ConfigItem<T> getItem(@NotNull String path) {
+    public @NotNull <T> ConfigItem<T> getItem(@NotNull String path, @NotNull Class<T> clazz) {
         return new EmptyConfigItem<>();
     }
 

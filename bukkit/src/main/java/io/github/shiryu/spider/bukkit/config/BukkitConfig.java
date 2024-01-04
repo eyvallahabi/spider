@@ -64,6 +64,7 @@ public class BukkitConfig implements Config {
         if (clazz.equals(PotionEffect.class))
             return (ConfigItem<T>) new PotionEffectConfigItem();
 
+        
         return new GeneralConfigItem<>();
     }
 
