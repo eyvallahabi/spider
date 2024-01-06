@@ -1,8 +1,11 @@
 package io.github.shiryu.spider.bukkit.config;
 
 import io.github.shiryu.spider.api.config.LoadableConfig;
+import io.github.shiryu.spider.api.config.Section;
+import io.github.shiryu.spider.api.config.item.ConfigItem;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 
@@ -63,6 +66,11 @@ public class BukkitLoadableConfig implements LoadableConfig {
         }
     }
 
+    @Override
+    public @NotNull String getName() {
+        return null;
+    }
+
     private void copy(@NotNull final InputStream inputStream, @NotNull final File file) {
         try (OutputStream out = new FileOutputStream(file)) {
             byte[] buf = new byte[1024];
@@ -95,6 +103,36 @@ public class BukkitLoadableConfig implements LoadableConfig {
                     true
             );
         }
+    }
+
+    @Override
+    public @Nullable File getFile() {
+        return this.file;
+    }
+
+    @Override
+    public boolean has(@NotNull String path) {
+        return this.config.has(path);
+    }
+
+    @Override
+    public @Nullable Section getSection(@NotNull String path) {
+        return this.config.getSection(path);
+    }
+
+    @Override
+    public void set(@NotNull String path, @NotNull Object object) {
+        this.config.set(path, object);
+    }
+
+    @Override
+    public <T> T get(@NotNull String path) {
+        return this.config.get(path);
+    }
+
+    @Override
+    public @NotNull <T> ConfigItem<T> getItem(@NotNull String path, @NotNull Class<T> clazz) {
+        return this.config.getItem(path, clazz);
     }
 }
 
