@@ -1,6 +1,6 @@
 name: spider
 author: shiryu
-version: 1.0
+version: ${project.version}
 main: io.github.shiryu.spider.bukkit.SpiderPlugin
 api-version: 1.19
 commands:

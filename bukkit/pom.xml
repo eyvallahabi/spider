@@ -12,6 +12,10 @@
 
     <artifactId>bukkit</artifactId>
 
+    <build>
+        <finalName>spider-bukkit-${project.version}</finalName>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
