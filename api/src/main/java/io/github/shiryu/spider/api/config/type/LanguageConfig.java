@@ -6,6 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 public interface LanguageConfig extends LoadableConfig {
 
+    /**
+     * Get the selected language
+     *
+     * @return the selected language
+     */
     @NotNull
     Language getSelectedLanguage();
 
