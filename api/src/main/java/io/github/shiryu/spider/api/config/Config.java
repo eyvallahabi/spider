@@ -9,6 +9,11 @@ import java.io.File;
 public interface Config {
 
     /**
+     * Create the config
+     */
+    void create();
+
+    /**
      * Check if the config has a path
      * @param path the path to check
      * @return true if the path exists

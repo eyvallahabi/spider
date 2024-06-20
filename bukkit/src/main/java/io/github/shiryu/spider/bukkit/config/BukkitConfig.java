@@ -16,18 +16,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.List;
-import java.util.Optional;
 
 @Getter
+@RequiredArgsConstructor
 public class BukkitConfig implements Config {
 
     private final File file;
 
     private YamlConfiguration configuration;
 
-    public BukkitConfig(@NotNull final File file){
-        this.file = file;
+    @Override
+    public void create() {
+        if (!this.file.getParentFile().exists())
+            this.file.getParentFile().mkdirs();
+
+        try{
+            this.file.createNewFile();
+        }catch (final Exception exception){
+
+        }
 
         try{
             this.configuration = YamlConfiguration.loadConfiguration(file);
