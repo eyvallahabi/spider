@@ -4,12 +4,12 @@ import io.github.shiryu.spider.api.config.Config;
 import io.github.shiryu.spider.api.config.LoadableConfig;
 import io.github.shiryu.spider.api.config.handler.ConfigHandler;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 
-public class BukkitConfigHandler implements ConfigHandler {
+public class BukkitConfigHandler implements ConfigHandler<Plugin> {
 
     @Override
     public @NotNull Config load(@NotNull String name, @NotNull String path) {
@@ -22,8 +22,12 @@ public class BukkitConfigHandler implements ConfigHandler {
     }
 
     @Override
-    public @NotNull LoadableConfig resource(@NotNull String name, @NotNull String path) {
-        return null;
+    public @NotNull LoadableConfig resource(@NotNull final Plugin plugin, @NotNull String name, @NotNull String path) {
+        return new BukkitLoadableConfig(
+                plugin,
+                name,
+                path
+        );
     }
 
     @Override

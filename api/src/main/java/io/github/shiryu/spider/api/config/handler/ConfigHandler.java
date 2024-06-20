@@ -1,5 +1,6 @@
 package io.github.shiryu.spider.api.config.handler;
 
+import com.sun.source.util.Plugin;
 import io.github.shiryu.spider.api.config.Config;
 import io.github.shiryu.spider.api.config.LoadableConfig;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,7 @@ import java.util.Set;
 /**
  * A handler for managing configurations
  */
-public interface ConfigHandler {
+public interface ConfigHandler<P> {
 
     /**
      * Load a configuration with name and the path
@@ -40,7 +41,7 @@ public interface ConfigHandler {
      * @return the loaded configuration
      */
     @NotNull
-    LoadableConfig resource(@NotNull final String name, @NotNull final String path);
+    LoadableConfig resource(@NotNull final P plugin, @NotNull final String name, @NotNull final String path);
 
     /**
      * Load a configuration from the resource
@@ -49,8 +50,8 @@ public interface ConfigHandler {
      * @return the loaded configuration
      */
     @NotNull
-    default LoadableConfig resource(@NotNull final String name){
-        return this.resource(name, "");
+    default LoadableConfig resource(@NotNull final P plugin, @NotNull final String name){
+        return this.resource(plugin, name, "");
     }
 
     /**

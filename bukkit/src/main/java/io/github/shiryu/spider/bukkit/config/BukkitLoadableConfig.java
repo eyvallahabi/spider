@@ -68,7 +68,7 @@ public class BukkitLoadableConfig implements LoadableConfig {
 
     @Override
     public @NotNull String getName() {
-        return null;
+        return this.name;
     }
 
     private void copy(@NotNull final InputStream inputStream, @NotNull final File file) {
