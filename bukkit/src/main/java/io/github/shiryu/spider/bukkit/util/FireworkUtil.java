@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 public class FireworkUtil {
 
     public void spawnFirework(@NotNull final Location location, final int colorSize, final int fadeSize){
-        final Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+        final Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK_ROCKET);
         final FireworkMeta meta = firework.getFireworkMeta();
 
         final FireworkEffect effect = FireworkEffect.builder()

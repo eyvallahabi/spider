@@ -44,6 +44,24 @@ public class BukkitConfig implements Config {
     }
 
     @Override
+    public void save() {
+        try{
+            this.configuration.save(this.file);
+            this.configuration.load(this.file);
+        }catch (final Exception exception){
+
+        }
+    }
+
+    public void load(){
+        try{
+            this.configuration = YamlConfiguration.loadConfiguration(file);
+        }catch (final Exception exception){
+            this.configuration = null;
+        }
+    }
+
+    @Override
     public boolean has(@NotNull final String path) {
         return this.configuration.contains(path);
     }

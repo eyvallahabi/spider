@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.map.MapView;
 import org.bukkit.material.MaterialData;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
@@ -155,14 +154,25 @@ public class ItemBuilder {
 
     @NotNull
     public final ItemBuilder potion(@NotNull final PotionType type, final boolean splash, final int level){
-        return this.updateItem(item ->{
-            final Potion potion = new Potion(type, level);
+        updateItem(item ->{
+            if (splash){
+                item.setType(Material.SPLASH_POTION);
+            }else{
+                item.setType(Material.POTION);
+            }
 
-            potion.setSplash(splash);
+            return item;
+        });
 
-            return potion.toItemStack(item.getAmount());
+        return this.updateFunctional(meta ->{
+            final PotionMeta potionMeta = (PotionMeta) meta;
+
+            potionMeta.setBasePotionType(type);
+
+            return potionMeta;
         });
     }
+
     @NotNull
     public final ItemBuilder name(@NotNull final String name){
         return this.update(itemMeta ->

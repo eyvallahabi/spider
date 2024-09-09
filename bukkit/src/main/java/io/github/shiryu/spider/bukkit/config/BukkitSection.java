@@ -27,6 +27,11 @@ public class BukkitSection implements Section {
     }
 
     @Override
+    public void save() {
+
+    }
+
+    @Override
     public boolean has(@NotNull String path) {
         return this.section.contains(path);
     }

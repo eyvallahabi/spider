@@ -40,6 +40,7 @@ public class BukkitLoadableConfig implements LoadableConfig {
     public void create() {
         if (this.file.exists()){
             this.config = new BukkitConfig(this.file);
+            this.config.load();
 
             return;
         }
@@ -47,7 +48,7 @@ public class BukkitLoadableConfig implements LoadableConfig {
         if (!this.file.getParentFile().exists())
             this.file.getParentFile().mkdirs();
 
-        if (this.path == null){
+        if (this.path == null || path.isEmpty()){
             this.copy(
                     this.plugin.getResource(this.name),
                     this.file
@@ -59,11 +60,8 @@ public class BukkitLoadableConfig implements LoadableConfig {
             );
         }
 
-        try{
-            this.file.createNewFile();
-        }catch (final Exception exception){
-
-        }
+        this.config = new BukkitConfig(this.file);
+        this.config.load();
     }
 
     @Override
