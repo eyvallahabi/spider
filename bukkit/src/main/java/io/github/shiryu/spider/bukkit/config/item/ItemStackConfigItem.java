@@ -9,7 +9,6 @@ import org.bukkit.Color;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,13 +51,13 @@ public class ItemStackConfigItem implements ConfigItem<ItemStack> {
             }
         }
 
-        if (material == XMaterial.POTION) {
+        /*if (material == XMaterial.POTION) {
             final Potion potion = Potion.fromItemStack(this.value);
 
             config.set(path + ".potionType", potion.getType().name());
             config.set(path + ".potionSplash", Boolean.valueOf(potion.isSplash()));
             config.set(path + ".potionLevel", Integer.valueOf(potion.getLevel()));
-        }
+        }*/
 
         if (!this.value.getEnchantments().isEmpty()) {
             final AtomicInteger id = new AtomicInteger(0);
