@@ -10,6 +10,7 @@ import io.github.shiryu.spider.bukkit.config.item.PotionEffectConfigItem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +69,7 @@ public class BukkitConfig implements Config {
 
     @Override
     public @Nullable Section getSection(@NotNull String path) {
-        return null;
+        return new BukkitSection(this, this.configuration.getConfigurationSection(path) == null ? this.configuration.createSection(path) : this.configuration.getConfigurationSection(path));
     }
 
     @Override

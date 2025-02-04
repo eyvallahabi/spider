@@ -1,6 +1,9 @@
 package io.github.shiryu.spider.bukkit.util;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
+import com.mojang.authlib.GameProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -58,19 +61,9 @@ public class ItemBuilder {
 
     @NotNull
     public ItemBuilder skull(@NotNull final UUID uuid){
-        updateItem(item ->{
-            item.setType(XMaterial.PLAYER_HEAD.parseMaterial());
-
-            return item;
-        });
-
-        updateFunctional(meta ->{
-            final SkullMeta skullMeta = (SkullMeta) meta;
-
-            skullMeta.setOwner(Bukkit.getOfflinePlayer(uuid).getName());
-
-            return skullMeta;
-        });
+        updateItem(item -> XSkull.createItem()
+                .profile(Profileable.of(uuid))
+                .apply());
 
         return this;
     }
@@ -212,7 +205,11 @@ public class ItemBuilder {
     @NotNull
     public final ItemBuilder lore(@NotNull final String lore){
         return this.update(itemMeta ->{
-            if (!(itemMeta.hasLore())) itemMeta.setLore(Collections.singletonList(lore));
+            if (!(itemMeta.hasLore())){
+                itemMeta.setLore(Collections.singletonList(Colored.convert(lore)));
+
+                return;
+            }
 
             final List<String> itemLore = itemMeta.getLore();
 

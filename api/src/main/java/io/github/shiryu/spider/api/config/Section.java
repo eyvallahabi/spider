@@ -24,6 +24,6 @@ public interface Section extends Config {
      *
      */
     default void forEach(final Consumer<String> consumer){
-        this.getKeys().forEach(consumer::accept);
+        this.getKeys().forEach(consumer);
     }
 }
