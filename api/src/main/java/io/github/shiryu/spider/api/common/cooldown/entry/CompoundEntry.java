@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class CompoundEntry implements CooldownEntry {
         return this.entries.stream()
                 .filter(entry -> entry.getId().equals(id))
                 .filter(entry -> entry.getUuid().equals(uuid))
-                .anyMatch(entry -> entry.active());
+                .anyMatch(SingularEntry::active);
     }
 
     @NotNull
@@ -42,15 +43,15 @@ public class CompoundEntry implements CooldownEntry {
     }
 
     public boolean active(@NotNull final UUID uuid, @NotNull final String id){
-        if (this.entries.size() == 0)
+        if (this.entries.isEmpty())
             return false;
 
         final List<SingularEntry> singulars = this.entries
                 .stream()
-                .filter(entry -> entry != null)
+                .filter(Objects::nonNull)
                 .filter(entry -> entry.getId().equalsIgnoreCase(id))
                 .filter(entry -> entry.getUuid().equals(uuid))
-                .collect(Collectors.toList());
+                .toList();
 
         if (singulars.isEmpty())
             return false;

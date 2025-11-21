@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public enum Language {
 
     TURKISH("tr", "Türkçe"),
@@ -16,4 +15,8 @@ public enum Language {
     private final String id;
     private final String display;
 
+    Language(String id, String display) {
+        this.id = id;
+        this.display = display;
+    }
 }

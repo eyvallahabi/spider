@@ -4,9 +4,16 @@ import io.github.shiryu.spider.api.config.Config;
 import io.github.shiryu.spider.api.config.Section;
 import io.github.shiryu.spider.api.config.item.ConfigItem;
 import io.github.shiryu.spider.api.config.item.impl.EmptyConfigItem;
+import io.github.shiryu.spider.api.config.item.impl.GeneralConfigItem;
+import io.github.shiryu.spider.bukkit.config.item.ItemStackConfigItem;
+import io.github.shiryu.spider.bukkit.config.item.LocationConfigItem;
+import io.github.shiryu.spider.bukkit.config.item.PotionEffectConfigItem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +45,12 @@ public class BukkitSection implements Section {
 
     @Override
     public @Nullable Section getSection(@NotNull String path) {
-        return new BukkitSection(this.parent, this.section.getConfigurationSection(path));
+        final ConfigurationSection section = this.section.getConfigurationSection(path);
+
+        if (section == null)
+            return null;
+
+        return new BukkitSection(this.parent, section);
     }
 
     @Override
@@ -56,7 +68,21 @@ public class BukkitSection implements Section {
 
     @Override
     public @NotNull <T> ConfigItem<T> getItem(@NotNull String path, @NotNull Class<T> clazz) {
-        return new EmptyConfigItem<>();
+        if (clazz.equals(Location.class))
+            return (ConfigItem<T>) new LocationConfigItem();
+
+        if (clazz.equals(PotionEffect.class))
+            return (ConfigItem<T>) new PotionEffectConfigItem();
+
+        if (clazz.equals(ItemStack.class)){
+            final ItemStackConfigItem item = new ItemStackConfigItem();
+
+            item.get(this, path);
+
+            return (ConfigItem<T>) item;
+        }
+
+        return new GeneralConfigItem<>();
     }
 
     @Override

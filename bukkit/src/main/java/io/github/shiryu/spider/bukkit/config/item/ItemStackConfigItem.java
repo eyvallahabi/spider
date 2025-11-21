@@ -2,6 +2,7 @@ package io.github.shiryu.spider.bukkit.config.item;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.github.shiryu.spider.api.config.Config;
+import io.github.shiryu.spider.api.config.Section;
 import io.github.shiryu.spider.api.config.item.ConfigItem;
 import io.github.shiryu.spider.bukkit.util.ItemBuilder;
 import lombok.Getter;
@@ -27,8 +28,6 @@ public class ItemStackConfigItem implements ConfigItem<ItemStack> {
     @Override
     public void save(@NotNull Config config, @NotNull String path) {
         XMaterial material = XMaterial.matchXMaterial(value.getType());
-
-        if (material == null) material = XMaterial.PAPER;
 
         config.set(path + ".material", material.name());
         config.set(path + ".amount", value.getAmount());
@@ -103,17 +102,30 @@ public class ItemStackConfigItem implements ConfigItem<ItemStack> {
                     .build());
         }
 
+        if (config.get("custom-model-data") != null){
+            final int customModelData = config.getOrSet(path + ".custom-model-data", 0);
+
+            item.set(
+                    ItemBuilder.from(item.get())
+                            .updateFunctional(meta ->{
+                                meta.setCustomModelData(customModelData);
+
+                                return meta;
+                            })
+                            .build()
+            );
+        }
+
         if (material.name().startsWith("LEATHER_")) {
             Color color = Color.fromRGB((
                     config.getOrSet(path + ".color.red", 0)),
                     config.getOrSet(path + ".color.green", 0),
                     config .getOrSet(path + ".color.blue", 0));
 
-            if (color != null)
-                item.set(
-                        ItemBuilder.from(item.get())
-                                .dye(color)
-                                .build());
+            item.set(
+                    ItemBuilder.from(item.get())
+                            .dye(color)
+                            .build());
 
         }
 
@@ -127,16 +139,19 @@ public class ItemStackConfigItem implements ConfigItem<ItemStack> {
                                             config.getOrSet(path + ".potionLevel", 1))
                             .build());
 
+        final Section enchantments = config.getSection(path + ".enchantments");
 
-        config.getSection(path + ".enchantments").forEach(key ->{
-            final Enchantment enchantment = Enchantment.getByName(config.getOrSet(path + ".enchantments." + key + ".enchantment", "PROTECTION_ENVIRONMENTAL"));
-            final int level = config.getOrSet(path + ".enchantments." + key + ".level", 0);
+        if (enchantments != null){
+            enchantments.forEach(key ->{
+                final Enchantment enchantment = Enchantment.getByName(config.getOrSet(path + ".enchantments." + key + ".enchantment", "PROTECTION_ENVIRONMENTAL"));
+                final int level = config.getOrSet(path + ".enchantments." + key + ".level", 0);
 
-            item.set(
-                    ItemBuilder.from(item.get())
-                            .enchant(enchantment, level)
-                            .build());
-        });
+                item.set(
+                        ItemBuilder.from(item.get())
+                                .enchant(enchantment, level)
+                                .build());
+            });
+        }
 
         this.value = item.get();
     }

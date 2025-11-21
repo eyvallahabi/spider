@@ -5,7 +5,6 @@ import io.github.shiryu.spider.api.config.item.ConfigItem;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
 public class GeneralConfigItem<T> implements ConfigItem<T> {
 
     private T value;
@@ -16,6 +15,11 @@ public class GeneralConfigItem<T> implements ConfigItem<T> {
                 path,
                 this.value
         );
+    }
+
+    @Override
+    public @NotNull T getValue() {
+        return this.value;
     }
 
     @Override
