@@ -1,6 +1,8 @@
 package io.github.shiryu.spider.api.config.impl;
 
 import io.github.shiryu.spider.api.config.Config;
+import io.github.shiryu.spider.api.config.Configs;
+import io.github.shiryu.spider.api.config.serializer.ConfigSerializer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +30,13 @@ public record Section(Config parent, ConfigurationSection section) implements Co
 
     @Override
     public void set(@NotNull String path, Object value) {
-        //TODO ADD CONVERTERS INTO THIS
+        final ConfigSerializer serializer = Configs.getSerializer(value.getClass());
+
+        if (serializer != null){
+            serializer.set(this, path, value);
+            return;
+        }
+
         this.section.set(path, value);
     }
 
@@ -39,9 +47,12 @@ public record Section(Config parent, ConfigurationSection section) implements Co
 
     @Override
     public <T> T get(@NotNull String path, @NotNull Class<T> clazz) {
-        //TODO ADD CONVERTERS INTO THIS
+        final ConfigSerializer<T> serializer = Configs.getSerializer(clazz);
 
-        return null;
+        if (serializer == null)
+            return null;
+
+        return serializer.get(this, path);
     }
 
     @Override
