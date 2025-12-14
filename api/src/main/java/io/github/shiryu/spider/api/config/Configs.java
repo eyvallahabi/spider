@@ -37,7 +37,7 @@ public class Configs {
         final Config config;
 
         if (copyDefaults){
-            config = new ResourceConfig(plugin, name, path);
+            config = new ResourceConfig(plugin, name + ".yml", path);
         }else{
             if (path.isEmpty())
                 config = new BasicConfig(new File(plugin.getDataFolder(), name + ".yml"));

@@ -79,6 +79,9 @@ public class ItemStackSerializer implements ConfigSerializer<ItemStack> {
                     .apply());
         }
 
+        if (!config.contains(path + ".enchantments"))
+            return builder.build();
+
         final Section enchantments = config.getSection(path + ".enchantments");
 
         if (enchantments != null){

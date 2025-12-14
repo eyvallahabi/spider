@@ -57,8 +57,10 @@ public class ResourceConfig implements Config {
             stream = this.plugin.getResource(this.path.replaceAll("/", "") + "/" + this.name);
         }
 
-        if (stream == null)
+        if (stream == null){
+            System.out.println("Stream is null for resource config: " + this.name);
             return false;
+        }
 
         this.copy(stream, this.file);
 
