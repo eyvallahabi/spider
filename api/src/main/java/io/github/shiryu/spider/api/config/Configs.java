@@ -52,6 +52,11 @@ public class Configs {
     }
 
     @NotNull
+    public Config create(@NotNull final Plugin plugin, @NotNull final String name, final boolean copyDefaults){
+        return create(plugin, name, "", copyDefaults);
+    }
+
+    @NotNull
     public Config create(@NotNull final Plugin plugin, @NotNull final String name, @NotNull final String path){
         return create(plugin, name, path, false);
     }

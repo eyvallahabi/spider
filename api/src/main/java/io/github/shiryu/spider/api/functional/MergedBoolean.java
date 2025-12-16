@@ -1,4 +1,4 @@
-package io.github.shiryu.spider.util.functional;
+package io.github.shiryu.spider.api.functional;
 
 import org.jetbrains.annotations.NotNull;
 
