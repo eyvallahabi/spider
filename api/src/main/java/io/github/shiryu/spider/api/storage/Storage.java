@@ -16,6 +16,8 @@ public interface Storage<T> {
 
     void save(@NotNull final T object);
 
-    T load(@NotNull final String identifier);
+    T load(@NotNull final UUID uuid);
+
+    boolean contains(@NotNull final UUID uuid);
 
 }

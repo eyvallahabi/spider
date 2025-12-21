@@ -1,6 +1,7 @@
 package io.github.shiryu.spider.api.factory;
 
 import com.google.common.collect.Lists;
+import io.github.shiryu.spider.api.factory.impl.AbstractFactory;
 import io.github.shiryu.spider.api.factory.impl.ItemStackFactory;
 import io.github.shiryu.spider.api.factory.impl.LocationFactory;
 import lombok.Getter;
@@ -17,6 +18,12 @@ public class Factories {
             new ItemStackFactory(),
             new LocationFactory()
     );
+
+    public void registerAll(){
+        factories.stream()
+                .map(factory -> (AbstractFactory) factory)
+                .forEach(AbstractFactory::register);
+    }
 
     @NotNull
     public <T> T deserialize(@NotNull final String string, @NotNull final Class<T> type){

@@ -5,6 +5,7 @@ import io.github.shiryu.spider.action.CommandAction;
 import io.github.shiryu.spider.action.MessageAction;
 import io.github.shiryu.spider.action.TitleAction;
 import io.github.shiryu.spider.api.config.Configs;
+import io.github.shiryu.spider.api.factory.Factories;
 import io.github.shiryu.spider.config.ItemStackSerializer;
 import io.github.shiryu.spider.config.LocationSerializer;
 import io.github.shiryu.spider.api.registry.Registries;
@@ -91,6 +92,8 @@ public class SpiderPlugin extends JavaPlugin {
                 EnchantmentTypeRequirement.class,
                 CaughtTypeRequirement.class
         );
+
+        Factories.registerAll();
 
         Registries.INTEGRATION.register(EconomyIntegration.class);
 

@@ -18,6 +18,8 @@ public class FlatFileConnection implements StorageConnection {
 
     private final String name;
 
+    private Plugin plugin;
+
     private final Map<UUID, File> files = Maps.newHashMap();
 
     @Override
@@ -25,8 +27,32 @@ public class FlatFileConnection implements StorageConnection {
         return ConnectionType.FLAT_FILE;
     }
 
+    @NotNull
+    public File create( @NotNull final UUID uuid) {
+        final File parent = new File(this.plugin.getDataFolder(), this.name + "/");
+
+        if (!parent.exists())
+            parent.mkdirs();
+
+        final File file = new File(parent, uuid.toString() + ".yml");
+
+        try{
+            if (file.createNewFile()){
+                this.files.put(uuid, file);
+
+                return file;
+            }
+        }catch (final Exception e){
+            e.printStackTrace();
+        }
+
+        return file;
+    }
+
     @Override
     public void connect(@NotNull final Plugin plugin) {
+        this.plugin = plugin;
+
         final File parent = new File(plugin.getDataFolder(), this.name + "/");
 
         if (!parent.exists())

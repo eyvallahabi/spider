@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public abstract class AbstractFlatFileStorage<T> implements Storage<T> {
+public class FlatFileStorage<T> implements Storage<T> {
 
     private final FlatFileConnection connection;
     private final Class<T> type;
@@ -34,7 +34,7 @@ public abstract class AbstractFlatFileStorage<T> implements Storage<T> {
             return;
 
         try{
-            final Field idField = object.getClass().getField(storable.identifier());
+            final Field idField = object.getClass().getDeclaredField(storable.identifier());
 
             idField.setAccessible(true);
 
@@ -47,7 +47,10 @@ public abstract class AbstractFlatFileStorage<T> implements Storage<T> {
 
             final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-            for (final Field field : object.getClass().getFields()){
+            for (final Field field : object.getClass().getDeclaredFields()){
+                if (field.getName().equals(storable.identifier()))
+                    continue;
+
                 field.setAccessible(true);
 
                 final Object value = field.get(object);
@@ -66,25 +69,22 @@ public abstract class AbstractFlatFileStorage<T> implements Storage<T> {
 
             config.save(file);
         }catch (final Exception exception){
-            throw new RuntimeException("Failed to save object " + object.getClass().getSimpleName());
+            throw new RuntimeException("Failed to save object of type " + object.getClass().getSimpleName(), exception);
         }
     }
 
     @Override
-    public T load(@NotNull String identifier) {
-        final UUID uuid;
+    public boolean contains(@NotNull UUID uuid) {
+        return this.connection.getFiles().containsKey(uuid);
+    }
 
-        try{
-            uuid = UUID.fromString(identifier);
-        }catch (final Exception exception){
-            throw new IllegalArgumentException("Identifier " + identifier + " is not a valid UUID");
-        }
-
+    @Override
+    public T load(@NotNull UUID uuid) {
         if (!this.all.containsKey(uuid)){
-            final File file = this.connection.getFiles().get(uuid);
+            File file = this.connection.getFiles().get(uuid);
 
             if (file == null)
-                throw new RuntimeException("No file found for id " + uuid);
+                file = this.connection.create(uuid);
 
             final FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
