@@ -161,6 +161,65 @@ public class RealItemProjectile {
         new ShootTask(this, world).runTaskTimer(SpiderPlugin.getPlugin(), 1, 1);
     }
 
+    public void hit(@NotNull final World world){
+        final RayTraceResult result = world.rayTrace(
+                stand.getLocation().add(0, 0.5, 0),
+                direction.normalize(),
+                direction.length(),
+                FluidCollisionMode.NEVER,
+                true,
+                0.1,
+                entity -> {
+                    final UUID uuid = entity.getUniqueId();
+
+                    return !uuid.equals(shooter.getUniqueId()) && !uuid.equals(stand.getUniqueId());
+                }
+        );
+
+        if (result != null) {
+            if (result.getHitEntity() != null) {
+                if (hitEntityCallback != null)
+                    hitEntityCallback.accept(result.getHitEntity(), this);
+
+                return;
+            }
+
+            if (result.getHitBlock() != null){
+                if (this.hitBlockCallback != null)
+                    this.hitBlockCallback.accept(result.getHitBlock(), this);
+
+                if (!this.bounce)
+                    return;
+
+                final BlockFace face = result.getHitBlockFace();
+
+                if (face == null)
+                    return;
+
+                this.bounceCount++;
+
+                if (this.bounceCount > this.maxBounces)
+                    return;
+
+                final Vector normal = face.getDirection().normalize();
+
+                Vector velocity = this.direction.clone().subtract(
+                        normal.clone().multiply(
+                                2 * this.direction.dot(normal)
+                        )
+                );
+
+                velocity = velocity.multiply(this.bounceDamping);
+
+                direction = velocity.clone();
+
+                if (direction.length() < 0.2)
+                    this.stand.remove();
+
+            }
+        }
+    }
+
     @Getter
     @RequiredArgsConstructor
     public class ShootTask extends BukkitRunnable{
@@ -192,73 +251,7 @@ public class RealItemProjectile {
             rot += rotationSpeed;
             stand.setRightArmPose(new EulerAngle(rot, 0, 0));
 
-            new HitTask(this.projectile, world).runTaskLater(SpiderPlugin.getPlugin(), 0);
-        }
-    }
-
-    @RequiredArgsConstructor
-    public class HitTask extends BukkitRunnable{
-        private final RealItemProjectile projectile;
-        private final World world;
-
-        @Override
-        public void run() {
-            final RayTraceResult result = world.rayTrace(
-                    stand.getLocation().add(0, 0.5, 0),
-                    direction.normalize(),
-                    direction.length(),
-                    FluidCollisionMode.NEVER,
-                    true,
-                    0.1,
-                    entity -> {
-                        final UUID uuid = entity.getUniqueId();
-
-                        return !uuid.equals(shooter.getUniqueId()) && !uuid.equals(stand.getUniqueId());
-                    }
-            );
-
-            if (result != null) {
-                if (result.getHitEntity() != null) {
-                    if (hitEntityCallback != null)
-                        hitEntityCallback.accept(result.getHitEntity(), this.projectile);
-
-                    cancel();
-                    return;
-                }
-
-                if (result.getHitBlock() != null && bounce) {
-                    if (hitBlockCallback != null)
-                        hitBlockCallback.accept(result.getHitBlock(), this.projectile);
-
-                    final BlockFace face = result.getHitBlockFace();
-
-                    if (face == null){
-                        cancel();
-                        return;
-                    }
-
-                    bounceCount++;
-                    if (bounceCount > maxBounces){
-                        cancel();
-                        return;
-                    }
-
-                    Vector normal = result.getHitBlockFace().getDirection().normalize();
-
-                    Vector velocity = direction.clone().subtract(normal.clone().multiply(2 * direction.dot(normal)));
-
-                    velocity.multiply(bounceDamping);
-
-                    stand.teleport(stand.getLocation().add(normal.clone().multiply(0.2)));
-
-                    direction = velocity.clone();
-
-                    if (direction.length() < 0.2){
-                        cancel();
-                        return;
-                    }
-                }
-            }
+            hit(this.world);
         }
     }
 }

@@ -10,6 +10,7 @@ import io.github.shiryu.spider.config.ItemStackSerializer;
 import io.github.shiryu.spider.config.LocationSerializer;
 import io.github.shiryu.spider.api.registry.Registries;
 import io.github.shiryu.spider.integration.economy.EconomyIntegration;
+import io.github.shiryu.spider.integration.enchantment.ae.AdvancedEnchantmentsIntegration;
 import io.github.shiryu.spider.integration.skills.auraskills.AuraSkillsIntegration;
 import io.github.shiryu.spider.integration.world.WorldGuardIntegration;
 import io.github.shiryu.spider.requirement.*;
@@ -102,6 +103,9 @@ public class SpiderPlugin extends JavaPlugin {
 
         //Skills
         Registries.INTEGRATION.register("AuraSkills", AuraSkillsIntegration.class);
+
+        //Enchantments
+        Registries.INTEGRATION.register("AdvancedEnchantments", AdvancedEnchantmentsIntegration.class);
     }
 
 }

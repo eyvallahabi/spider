@@ -3,6 +3,8 @@ author: shiryu
 version: ${project.version}
 main: io.github.shiryu.spider.SpiderPlugin
 api-version: 1.21
+softdepend:
+  - AdvancedEnchantments
 
 commands:
 
