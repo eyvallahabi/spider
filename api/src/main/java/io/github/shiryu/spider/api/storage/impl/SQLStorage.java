@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import io.github.shiryu.spider.api.factory.Factories;
 import io.github.shiryu.spider.api.storage.Storable;
 import io.github.shiryu.spider.api.storage.Storage;
+import io.github.shiryu.spider.api.storage.annotations.Skip;
 import io.github.shiryu.spider.api.storage.connection.impl.sql.AbstractSQLConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,9 @@ public class SQLStorage<T> implements Storage<T> {
             final Map<String, String> columns = Maps.newHashMap();
 
             for (final Field field : object.getClass().getDeclaredFields()){
+                if (field.getAnnotation(Skip.class) != null)
+                    continue;
+
                 field.setAccessible(true);
 
                 final String columnName = field.getName();

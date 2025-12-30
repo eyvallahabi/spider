@@ -8,8 +8,6 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.github.shiryu.spider.api.integration.Integration;
-import io.github.shiryu.spider.api.registry.Registries;
-import io.github.shiryu.spider.integration.world.requirement.RegionRequirement;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -109,7 +107,7 @@ public class WorldGuardIntegration implements Integration {
 
     @Override
     public void enable() {
-        Registries.REQUIREMENT.register(RegionRequirement.class);
+
     }
 
     @Override

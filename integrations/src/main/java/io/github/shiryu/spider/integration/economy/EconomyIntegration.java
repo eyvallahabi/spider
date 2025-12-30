@@ -1,10 +1,6 @@
 package io.github.shiryu.spider.integration.economy;
 
 import io.github.shiryu.spider.api.integration.Integration;
-import io.github.shiryu.spider.api.registry.Registries;
-import io.github.shiryu.spider.integration.economy.action.GiveMoneyAction;
-import io.github.shiryu.spider.integration.economy.action.WithdrawMoneyAction;
-import io.github.shiryu.spider.integration.economy.requirement.MoneyRequirement;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -17,12 +13,7 @@ public class EconomyIntegration implements Integration {
 
     @Override
     public void enable() {
-        Registries.ACTION.register(
-                GiveMoneyAction.class,
-                WithdrawMoneyAction.class
-        );
 
-        Registries.REQUIREMENT.register(MoneyRequirement.class);
     }
 
     @Override

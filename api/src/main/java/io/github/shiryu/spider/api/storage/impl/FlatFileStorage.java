@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import io.github.shiryu.spider.api.factory.Factories;
 import io.github.shiryu.spider.api.storage.Storable;
 import io.github.shiryu.spider.api.storage.Storage;
+import io.github.shiryu.spider.api.storage.annotations.Skip;
 import io.github.shiryu.spider.api.storage.connection.impl.FlatFileConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,9 @@ public class FlatFileStorage<T> implements Storage<T> {
             final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
             for (final Field field : object.getClass().getDeclaredFields()){
+                if (field.getAnnotation(Skip.class) != null)
+                    continue;
+
                 if (field.getName().equals(storable.identifier()))
                     continue;
 

@@ -6,7 +6,5 @@ import lombok.experimental.UtilityClass;
 public class Registries {
 
     public final IntegrationRegistry INTEGRATION = new IntegrationRegistry();
-    public final ActionRegistry ACTION = new ActionRegistry();
-    public final RequirementRegistry REQUIREMENT = new RequirementRegistry();
 
 }
