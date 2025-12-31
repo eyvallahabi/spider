@@ -6,12 +6,15 @@ import io.github.shiryu.spider.api.executable.variable.impl.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 public class ExecutionContextBuilder {
@@ -28,6 +31,36 @@ public class ExecutionContextBuilder {
     }
 
     @NotNull
+    public ExecutionContextBuilder trigger(@NotNull final Entity entity){
+        return this.add("trigger", entity);
+    }
+
+    @NotNull
+    public ExecutionContextBuilder trigger(@NotNull final Location location){
+        return this.add("trigger", location);
+    }
+
+    @NotNull
+    public ExecutionContextBuilder trigger(@NotNull final Block block){
+        return this.add("trigger", block);
+    }
+
+    @NotNull
+    public ExecutionContextBuilder player(@NotNull final String name, @NotNull final Player player){
+        return this.add(name, player);
+    }
+
+    @NotNull
+    public ExecutionContextBuilder damageSource(@NotNull final String name, @NotNull final DamageSource source){
+        return this.add(name, source);
+    }
+
+    @NotNull
+    public <T> ExecutionContextBuilder list(@NotNull final String name, @NotNull final List<T> list){
+        return this.add(name, list);
+    }
+
+    @NotNull
     public ExecutionContextBuilder event(@NotNull final Event event){
         return this.add("event", event);
     }
@@ -35,6 +68,11 @@ public class ExecutionContextBuilder {
     @NotNull
     public ExecutionContextBuilder location(@NotNull final Location location){
         return this.add("location", location);
+    }
+
+    @NotNull
+    public ExecutionContextBuilder location(@NotNull final String name, @NotNull final Location location){
+        return this.add(name, location);
     }
 
     @NotNull
@@ -78,6 +116,11 @@ public class ExecutionContextBuilder {
     }
 
     @NotNull
+    public ExecutionContextBuilder decimal(@NotNull final String name, final float value){
+        return this.add(name, value);
+    }
+
+    @NotNull
     private ExecutionContextBuilder add(@NotNull final Variable<?> variable){
         this.variables.put(variable.getName(), variable);
         return this;
@@ -87,7 +130,13 @@ public class ExecutionContextBuilder {
     private ExecutionContextBuilder add(@NotNull final String name, @NotNull final Object value){
         Variable<?> variable = null;
 
-        if (value.getClass() == Boolean.class){
+        if (value.getClass() == Float.class){
+            variable = new FloatVariable(name, (Float) value);
+        }else if (value instanceof List<?> list){
+            variable = new ListVariable<>(name, list);
+        }else if (value instanceof DamageSource source){
+            variable = new DamageSourceVariable(name, source);
+        }else if (value.getClass() == Boolean.class){
             variable = new BooleanVariable(name, (Boolean) value);
         }else if (value.getClass() == Double.class){
             variable = new DoubleVariable(name, (Double) value);

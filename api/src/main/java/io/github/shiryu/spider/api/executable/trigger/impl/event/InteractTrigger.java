@@ -23,7 +23,8 @@ public class InteractTrigger implements EventTrigger {
                 .world(player.getWorld());
 
         if (event.hasBlock() && event.getClickedBlock() != null)
-            builder = builder.block("clickedBlock", event.getClickedBlock());
+            builder = builder.block("clickedBlock", event.getClickedBlock())
+                    .trigger(event.getClickedBlock());
 
         if (event.hasItem() && event.getItem() != null)
             builder = builder.item("itemInHand", event.getItem());
@@ -38,6 +39,7 @@ public class InteractTrigger implements EventTrigger {
         this.call(
                 ExecutionContextBuilder.newBuilder()
                         .caster(player)
+                        .trigger(event.getRightClicked())
                         .entity("rightClickedEntity", event.getRightClicked())
                         .event(event)
                         .location(player.getLocation())

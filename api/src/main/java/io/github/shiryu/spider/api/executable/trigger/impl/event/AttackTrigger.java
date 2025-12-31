@@ -19,6 +19,7 @@ public class AttackTrigger implements EventTrigger {
         this.call(
                 ExecutionContextBuilder.newBuilder()
                         .caster(damager)
+                        .trigger(victim)
                         .entity("damaged", victim)
                         .event(event)
                         .location(damager.getLocation())
