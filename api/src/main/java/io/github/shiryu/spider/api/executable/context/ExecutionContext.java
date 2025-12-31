@@ -36,6 +36,27 @@ public class ExecutionContext {
         if (variable != null)
             return variable.getValue();
 
+        variable = new Variable<T>() {
+            private T val = defaultValue;
+
+            @Override
+            public @NotNull String getName() {
+                return name;
+            }
+
+            @Override
+            public @NotNull T getValue() {
+                return val;
+            }
+
+            @Override
+            public void setValue(@NotNull T value) {
+                this.val = value;
+            }
+        };
+
+        this.add(variable);
+
         return defaultValue;
     }
 
