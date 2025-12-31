@@ -1,14 +1,14 @@
 package io.github.shiryu.spider.api.executable.trigger.impl.event;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
-import io.github.shiryu.spider.api.executable.trigger.TriggerInfo;
+import io.github.shiryu.spider.api.executable.parseable.Parse;
 import io.github.shiryu.spider.api.executable.trigger.ext.EventTrigger;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-@TriggerInfo(name = "@attack", description = "Triggered when an entity attacks another entity.")
+@Parse(name = "@attack", description = "Triggered when an entity is attacked by another entity")
 public class AttackTrigger implements EventTrigger {
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -20,7 +20,7 @@ public class AttackTrigger implements EventTrigger {
                 ExecutionContextBuilder.newBuilder()
                         .caster(damager)
                         .trigger(victim)
-                        .entity("damaged", victim)
+                        .entity("target", victim)
                         .event(event)
                         .location(damager.getLocation())
                         .world(damager.getWorld())

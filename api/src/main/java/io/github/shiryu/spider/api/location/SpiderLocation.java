@@ -1,5 +1,6 @@
 package io.github.shiryu.spider.api.location;
 
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.util.NumberConversions;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -84,6 +86,171 @@ public class SpiderLocation {
 
     public int getBlockZ(){
         return this.convert().getBlockZ();
+    }
+
+    @NotNull
+    public List<SpiderLocation> blocksInSphere(final double radius, final double radiusY, final double noise, final boolean noAir, final boolean onlyAir){
+        final List<SpiderLocation> locations = new ArrayList<>();
+
+        for (int x = (int) -radius; x <= radius; x++) {
+            for (int y = (int) -radiusY; y <= radiusY; y++) {
+                for (int z = (int) -radius; z <= radius; z++) {
+                    double distance = Math.sqrt(x * x + y * y + z * z);
+                    if (distance <= radius) {
+                        if (noise > 0.0 && Math.random() < noise)
+                            continue;
+
+                        SpiderLocation location = new SpiderLocation(
+                                this.getWorld(),
+                                this.getX() + x,
+                                this.getY() + y,
+                                this.getZ() + z
+                        );
+
+                        if (noAir && location.convert().getBlock().isEmpty())
+                            continue;
+
+                        if (onlyAir && !location.convert().getBlock().isEmpty())
+                            continue;
+
+                        locations.add(location);
+                    }
+                }
+            }
+        }
+        return locations;
+    }
+
+    @NotNull
+    public List<SpiderLocation> blocksInCube(final double radius, final double radiusY, final double noise, final boolean noAir, final boolean onlyAir){
+        final List<SpiderLocation> locations = new ArrayList<>();
+
+        for (int x = (int) -radius; x <= radius; x++) {
+            for (int y = (int) -radiusY; y <= radiusY; y++) {
+                for (int z = (int) -radius; z <= radius; z++) {
+                    if (noise > 0.0 && Math.random() < noise)
+                        continue;
+
+                    SpiderLocation location = new SpiderLocation(
+                            this.getWorld(),
+                            this.getX() + x,
+                            this.getY() + y,
+                            this.getZ() + z
+                    );
+
+                    if (noAir && location.convert().getBlock().isEmpty())
+                        continue;
+
+                    if (onlyAir && !location.convert().getBlock().isEmpty())
+                        continue;
+
+                    locations.add(location);
+                }
+            }
+        }
+        return locations;
+    }
+
+    @NotNull
+    public List<SpiderLocation> sphere(final double radius, final double step){
+        final List<SpiderLocation> locations = new ArrayList<>();
+
+        for (double x = -radius; x <= radius; x += step) {
+            for (double y = -radius; y <= radius; y += step) {
+                for (double z = -radius; z <= radius; z += step) {
+                    if (x * x + y * y + z * z <= radius * radius) {
+                        locations.add(new SpiderLocation(
+                                this.getWorld(),
+                                this.getX() + x,
+                                this.getY() + y,
+                                this.getZ() + z
+                        ));
+                    }
+                }
+            }
+        }
+        return locations;
+    }
+
+    @NotNull
+    public List<SpiderLocation> rectangle(final double length, final double width, final double step){
+        final List<SpiderLocation> locations = new ArrayList<>();
+
+        double halfLength = length / 2;
+        double halfWidth = width / 2;
+
+        for (double x = -halfLength; x <= halfLength; x += step) {
+            for (double z = -halfWidth; z <= halfWidth; z += step) {
+                locations.add(new SpiderLocation(
+                        this.getWorld(),
+                        this.getX() + x,
+                        this.getY(),
+                        this.getZ() + z
+                ));
+            }
+        }
+        return locations;
+    }
+
+    @NotNull
+    public List<SpiderLocation> cone(final int maxDistance, final double angle, final double yOffset, final double step){
+        final Vector forward = this.convert().getDirection().normalize();
+        final Location start = this.convert().clone().add(0, yOffset, 0);
+
+        final List<Location> results = Lists.newArrayList();
+
+        for (double d = 0; d <= maxDistance; d += step) {
+
+            Location center = start.clone().add(forward.clone().multiply(d));
+
+            double radius = Math.tan(angle) * d;
+
+            if (radius < 0.001) {
+                results.add(center);
+                continue;
+            }
+
+            int points = (int) Math.max(6, (radius * 8)); // yoğunluk
+            double stepAngle = (Math.PI * 2) / points;
+
+            for (int i = 0; i < points; i++) {
+                double theta = i * stepAngle;
+
+                double x = Math.cos(theta) * radius;
+                double z = Math.sin(theta) * radius;
+
+                Location point = center.clone().add(x, 0, z);
+
+                Vector dirToPoint = point.clone().subtract(start).toVector().normalize();
+                double dot = dirToPoint.dot(forward);
+
+                if (dot >= Math.cos(angle))
+                    results.add(point);
+            }
+        }
+
+        return results.stream()
+                .map(SpiderLocation::from)
+                .toList();
+    }
+
+    @NotNull
+    public List<SpiderLocation> randomLocationsNear(final double radius, final int amount){
+        final List<SpiderLocation> locations = new ArrayList<>();
+
+        for (int i = 0; i < amount; i++) {
+            double angle = Math.random() * 2 * Math.PI;
+            double distance = Math.random() * radius;
+            double x = Math.cos(angle) * distance;
+            double z = Math.sin(angle) * distance;
+            locations.add(new SpiderLocation(
+                    this.getWorld(),
+                    this.getX() + x,
+                    this.getY(),
+                    this.getZ() + z
+            ));
+        }
+        return locations;
     }
 
     public double getGroundDistanceTo(@NotNull final SpiderLocation location) {

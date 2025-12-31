@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import io.github.shiryu.spider.api.executable.variable.Variable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +19,11 @@ public class ExecutionContext {
     private final Map<String, Variable<?>> variables;
 
     private final List<ExecutionContext> childs = Lists.newArrayList();
+
+    @NotNull
+    public Entity caster(){
+        return this.getOrSet("caster", null);
+    }
 
     @Nullable
     public <T> T get(@NotNull final String name){

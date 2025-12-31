@@ -1,14 +1,14 @@
 package io.github.shiryu.spider.api.executable.trigger.impl.event;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
-import io.github.shiryu.spider.api.executable.trigger.TriggerInfo;
+import io.github.shiryu.spider.api.executable.parseable.Parse;
 import io.github.shiryu.spider.api.executable.trigger.ext.EventTrigger;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
-@TriggerInfo(name = "@explode", description = "Triggered when an entity explodes.")
+@Parse(name = "@explode", description = "Triggered when an entity explodes")
 public class ExplodeTrigger implements EventTrigger {
 
     @EventHandler(priority = EventPriority.MONITOR)

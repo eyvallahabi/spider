@@ -1,7 +1,7 @@
 package io.github.shiryu.spider.api.executable.trigger.impl.event;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
-import io.github.shiryu.spider.api.executable.trigger.TriggerInfo;
+import io.github.shiryu.spider.api.executable.parseable.Parse;
 import io.github.shiryu.spider.api.executable.trigger.ext.EventTrigger;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-@TriggerInfo(name = "@kill_player", description = "Triggers when a player,mob kills another player.")
+@Parse(name = "@playerkill", description = "Triggered when a player is killed by another entity")
 public class PlayerKillTrigger implements EventTrigger {
 
     @EventHandler

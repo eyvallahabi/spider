@@ -1,7 +1,7 @@
 package io.github.shiryu.spider.api.executable.trigger.impl.event;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
-import io.github.shiryu.spider.api.executable.trigger.TriggerInfo;
+import io.github.shiryu.spider.api.executable.parseable.Parse;
 import io.github.shiryu.spider.api.executable.trigger.ext.EventTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,7 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-@TriggerInfo(name = "@interact", description = "Triggers when a player interacts with an entity or block.")
+@Parse(name = "@interact", description = "Triggered when a player interacts with a block or entity")
 public class InteractTrigger implements EventTrigger {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

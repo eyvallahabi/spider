@@ -1,14 +1,14 @@
 package io.github.shiryu.spider.api.executable.trigger.impl.event;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
-import io.github.shiryu.spider.api.executable.trigger.TriggerInfo;
+import io.github.shiryu.spider.api.executable.parseable.Parse;
 import io.github.shiryu.spider.api.executable.trigger.ext.EventTrigger;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityTameEvent;
 
-@TriggerInfo(name = "@tame", description = "Triggers when a player tames an entity.")
+@Parse(name = "@tame", description = "Triggered when an entity is tamed")
 public class TameTrigger implements EventTrigger {
 
     @EventHandler(priority = EventPriority.MONITOR)
