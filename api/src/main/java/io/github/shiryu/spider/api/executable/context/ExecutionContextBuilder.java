@@ -19,11 +19,28 @@ import java.util.Map;
 
 public class ExecutionContextBuilder {
 
+    @NotNull
+    public static ExecutionContextBuilder from(@NotNull final ExecutionContext context){
+        return new ExecutionContextBuilder(context);
+    }
+
+    @NotNull
     public static ExecutionContextBuilder newBuilder(){
         return new ExecutionContextBuilder();
     }
 
     private final Map<String, Variable<?>> variables = Maps.newHashMap();
+
+    private ExecutionContext context;
+
+    public ExecutionContextBuilder(){
+
+    }
+
+    public ExecutionContextBuilder(@NotNull final ExecutionContext context){
+        this.context = context;
+        this.variables.putAll(context.getVariables());
+    }
 
     @NotNull
     public ExecutionContextBuilder caster(@NotNull final Entity entity){
@@ -121,13 +138,13 @@ public class ExecutionContextBuilder {
     }
 
     @NotNull
-    private ExecutionContextBuilder add(@NotNull final Variable<?> variable){
+    public ExecutionContextBuilder add(@NotNull final Variable<?> variable){
         this.variables.put(variable.getName(), variable);
         return this;
     }
 
     @NotNull
-    private ExecutionContextBuilder add(@NotNull final String name, @NotNull final Object value){
+    public ExecutionContextBuilder add(@NotNull final String name, @NotNull final Object value){
         Variable<?> variable = null;
 
         if (value.getClass() == Float.class){
