@@ -3,7 +3,8 @@ package io.github.shiryu.spider.api.executable.targeter.impl.multi.location;
 import com.google.common.collect.Lists;
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
 import io.github.shiryu.spider.api.executable.parseable.Parse;
-import io.github.shiryu.spider.api.executable.targeter.ext.MultiTargeter;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
+import io.github.shiryu.spider.api.executable.targeter.MultiTargeter;
 import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,15 +16,21 @@ import java.util.List;
 @Parse(name = "@block_vein", description = "Targets all connected blocks of the same type")
 public class BlockVeinTargeter implements MultiTargeter<Location> {
 
+    private Material material;
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+        this.material = Material.valueOf(context.targeter().getOrDefault("material", "IRON_ORE"));
+    }
+
     @Override
     public @Nullable List<Location> find(@NotNull Trigger trigger, @NotNull ExecutionContext context) {
-        final Material material = Material.valueOf(context.getOrSet("material", "IRON_ORE"));
         final Location origin = context.get("block");
 
-        if (origin == null || origin.getBlock().getType() != material)
+        if (origin == null || origin.getBlock().getType() != this.material)
             return null;
 
-        return findVein(origin, material);
+        return findVein(origin, this.material);
     }
 
     @NotNull

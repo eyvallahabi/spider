@@ -1,6 +1,11 @@
 package io.github.shiryu.spider;
 
 import io.github.shiryu.spider.api.config.Configs;
+import io.github.shiryu.spider.api.executable.action.impl.SoundAction;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
+import io.github.shiryu.spider.api.executable.parseable.ParseableType;
+import io.github.shiryu.spider.api.executable.targeter.impl.single.entity.NearestPlayerTargeter;
+import io.github.shiryu.spider.api.executable.trigger.impl.event.InteractTrigger;
 import io.github.shiryu.spider.api.factory.Factories;
 import io.github.shiryu.spider.config.ItemStackSerializer;
 import io.github.shiryu.spider.config.LocationSerializer;
@@ -28,6 +33,24 @@ public class SpiderPlugin extends JavaPlugin {
 
         registerConfigSerializers();
         registerIntegrations();
+        registerExecutables();
+    }
+
+    private void registerExecutables(){
+        Registries.EXECUTABLE.register(
+                ParseableType.ACTION,
+                SoundAction.class
+        );
+
+        Registries.EXECUTABLE.register(
+                ParseableType.TARGETER,
+                NearestPlayerTargeter.class
+        );
+
+        Registries.EXECUTABLE.register(
+                ParseableType.TRIGGER,
+                InteractTrigger.class
+        );
     }
 
     private void registerConfigSerializers(){

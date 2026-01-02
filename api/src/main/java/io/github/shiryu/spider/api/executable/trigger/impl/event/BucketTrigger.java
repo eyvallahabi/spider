@@ -2,15 +2,22 @@ package io.github.shiryu.spider.api.executable.trigger.impl.event;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
 import io.github.shiryu.spider.api.executable.parseable.Parse;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
 import io.github.shiryu.spider.api.executable.trigger.ext.EventTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.jetbrains.annotations.NotNull;
 
 @Parse(name = "@bucket", description = "Triggered when a player fills or empties a bucket")
 public class BucketTrigger implements EventTrigger {
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void fill(final PlayerBucketFillEvent event){

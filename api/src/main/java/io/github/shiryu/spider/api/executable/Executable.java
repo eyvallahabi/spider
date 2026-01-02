@@ -11,6 +11,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -18,25 +19,21 @@ public class Executable {
 
     private final UUID uuid;
 
-    private final List<Trigger> triggers;
-    private final List<Requirement> requirements;
     private final Action action;
     private final Targeter targeter;
+    private final Trigger trigger;
+
+    private final List<Requirement> requirements;
 
     public Executable(@NotNull final Action action,
                       @NotNull final Targeter targeter,
-                      @NotNull final List<Requirement> requirements,
-                      @NotNull final Trigger... triggers){
+                      @NotNull final Trigger trigger,
+                      @NotNull final Requirement... requirements){
         this.uuid = UUID.randomUUID();
         this.action = action;
-        this.triggers = Lists.newArrayList(triggers);
-        this.requirements = requirements;
         this.targeter = targeter;
-    }
-
-    public boolean containsTrigger(@NotNull final Class<? extends Trigger> clazz){
-        return this.triggers.stream()
-                .anyMatch(trigger -> trigger.getClass().equals(clazz));
+        this.trigger = trigger;
+        this.requirements = Lists.newArrayList(requirements);
     }
 
     public boolean control(@NotNull final ExecutionContext context){
@@ -50,7 +47,7 @@ public class Executable {
     }
 
     public void accept(@NotNull final Trigger trigger, @NotNull ExecutionContext context){
-        if (!containsTrigger(trigger.getClass()))
+        if (!Objects.equals(trigger, this.trigger))
             return;
 
         final Object target = this.targeter.find(trigger, context);

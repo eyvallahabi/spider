@@ -2,7 +2,8 @@ package io.github.shiryu.spider.api.executable.targeter.impl.multi.location;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
 import io.github.shiryu.spider.api.executable.parseable.Parse;
-import io.github.shiryu.spider.api.executable.targeter.ext.MultiTargeter;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
+import io.github.shiryu.spider.api.executable.targeter.MultiTargeter;
 import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -15,17 +16,23 @@ import java.util.List;
 @Parse(name = "@forwardwall", description = "Targets locations in a forward wall pattern")
 public class ForwardWallTargeter implements MultiTargeter<Location> {
 
+    private int distance,height,width;
+    private double yOffset;
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+        this.distance = Integer.parseInt(context.targeter().getOrDefault("distance", "5"));
+        this.height = Integer.parseInt(context.targeter().getOrDefault("height", "3"));
+        this.width = Integer.parseInt(context.targeter().getOrDefault("width", "5"));
+        this.yOffset = Double.parseDouble(context.targeter().getOrDefault("y_offset", "0.0"));
+    }
+
     @Override
     public @Nullable List<Location> find(@NotNull Trigger trigger, @NotNull ExecutionContext context) {
         final Location origin = context.get("location");
 
         if (origin == null)
             return null;
-
-        final int distance = context.getOrSet("distance", 5);
-        final int height = context.getOrSet("height", 3);
-        final int width = context.getOrSet("width", 5);
-        final double yOffset = context.getOrSet("y_offset", 0.0);
 
         final Vector forward = origin.getDirection().normalize();
 

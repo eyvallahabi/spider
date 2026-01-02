@@ -2,6 +2,7 @@ package io.github.shiryu.spider.api.executable.trigger.impl.event;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
 import io.github.shiryu.spider.api.executable.parseable.Parse;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
 import io.github.shiryu.spider.api.executable.trigger.ext.EventTrigger;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -13,6 +14,11 @@ import org.jetbrains.annotations.NotNull;
 
 @Parse(name = "@projectilehit", description = "Triggered when a projectile hits an entity or block")
 public class ProjectileHitTrigger implements EventTrigger {
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void hit(final ProjectileHitEvent event){

@@ -1,11 +1,13 @@
 package io.github.shiryu.spider.api.executable.trigger.impl.multi;
 
 import io.github.shiryu.spider.api.executable.parseable.Parse;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
 import io.github.shiryu.spider.api.executable.trigger.impl.TriggerPack;
 import io.github.shiryu.spider.api.executable.trigger.impl.event.AttackTrigger;
 import io.github.shiryu.spider.api.executable.trigger.impl.event.DamagedTrigger;
 import io.github.shiryu.spider.api.executable.trigger.impl.event.DeathTrigger;
 import io.github.shiryu.spider.api.executable.trigger.impl.event.SpawnTrigger;
+import org.jetbrains.annotations.NotNull;
 
 @Parse(name = "@combat", description = "Triggers related to combat events")
 public class CombatTrigger extends TriggerPack {
@@ -19,4 +21,8 @@ public class CombatTrigger extends TriggerPack {
         );
     }
 
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+
+    }
 }

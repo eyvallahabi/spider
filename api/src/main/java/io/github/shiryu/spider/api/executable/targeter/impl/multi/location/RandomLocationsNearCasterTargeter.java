@@ -2,7 +2,8 @@ package io.github.shiryu.spider.api.executable.targeter.impl.multi.location;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
 import io.github.shiryu.spider.api.executable.parseable.Parse;
-import io.github.shiryu.spider.api.executable.targeter.ext.MultiTargeter;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
+import io.github.shiryu.spider.api.executable.targeter.MultiTargeter;
 import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import io.github.shiryu.spider.api.location.SpiderLocation;
 import org.bukkit.Location;
@@ -14,11 +15,18 @@ import java.util.List;
 @Parse(name = "@random_locations_near_caster", description = "Targets random locations near the caster within a specified radius")
 public class RandomLocationsNearCasterTargeter implements MultiTargeter<Location> {
 
+    private double radius;
+    private int amount;
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+        this.radius = Double.parseDouble(context.targeter().getOrDefault("radius", "5.0"));
+        this.amount = Integer.parseInt(context.targeter().getOrDefault("amount", "5"));
+    }
+
     @Override
     public @Nullable List<Location> find(@NotNull Trigger trigger, @NotNull ExecutionContext context) {
         final Location origin = context.caster().getLocation();
-        final double radius = context.getOrSet("radius", 5.0);
-        final int amount = context.getOrSet("amount", 5);
 
         return SpiderLocation.from(origin).randomLocationsNear(radius, amount)
                 .stream().map(SpiderLocation::convert).toList();

@@ -2,6 +2,7 @@ package io.github.shiryu.spider.api.executable.targeter.impl.single.location;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
 import io.github.shiryu.spider.api.executable.parseable.Parse;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
 import io.github.shiryu.spider.api.executable.targeter.Targeter;
 import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import io.papermc.paper.registry.RegistryAccess;
@@ -16,6 +17,17 @@ import org.jspecify.annotations.Nullable;
 @Parse(name = "@nearest_structure", aliases = "@ns", description = "Targets the nearest structure location")
 public class NearestStructureTargeter implements Targeter<Location> {
 
+    private String structure;
+    private int radius;
+    private boolean findUnexplored;
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+        this.structure = context.targeter().getOrDefault("structure", "stronghold");
+        this.radius = Integer.parseInt(context.targeter().getOrDefault("radius", "1000"));
+        this.findUnexplored = Boolean.parseBoolean(context.targeter().getOrDefault("find_unexplored", "false"));
+    }
+
     @Override
     public @Nullable Location find(@NotNull Trigger trigger, @NotNull ExecutionContext context) {
         final Location center = context.caster().getLocation();
@@ -23,17 +35,14 @@ public class NearestStructureTargeter implements Targeter<Location> {
         final Structure structure = RegistryAccess
                 .registryAccess()
                 .getRegistry(RegistryKey.STRUCTURE)
-                .getOrThrow(NamespacedKey.minecraft(context.getOrSet("structure", "stronghold")));
-
-        final int radius = context.getOrSet("radius", 1000);
-        final boolean findUnexplored = context.getOrSet("find_unexplored", false);
+                .getOrThrow(NamespacedKey.minecraft(this.structure));
 
         final StructureSearchResult result = center.getWorld()
                 .locateNearestStructure(
                         center,
                         structure,
-                        radius,
-                        findUnexplored
+                        this.radius,
+                        this.findUnexplored
                 );
 
         return result != null ? result.getLocation() : null;

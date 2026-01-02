@@ -2,6 +2,7 @@ package io.github.shiryu.spider.api.executable.targeter.impl.single.location;
 
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
 import io.github.shiryu.spider.api.executable.parseable.Parse;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
 import io.github.shiryu.spider.api.executable.targeter.Targeter;
 import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import org.bukkit.FluidCollisionMode;
@@ -15,9 +16,15 @@ import org.jspecify.annotations.Nullable;
 @Parse(name = "@target_block", aliases = "@tb", description = "Targets the block location of the target")
 public class TargetBlockTargeter implements Targeter<Location> {
 
+    private int maxDistance;
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+        this.maxDistance = Integer.parseInt(context.targeter().getOrDefault("distance", "64"));
+    }
+
     @Override
     public @Nullable Location find(@NotNull Trigger trigger, @NotNull ExecutionContext context) {
-        final int maxDistance = context.getOrSet("max_distance", 64);
 
         Location origin;
 
@@ -29,7 +36,7 @@ public class TargetBlockTargeter implements Targeter<Location> {
         final RayTraceResult result = context.caster().getWorld().rayTraceBlocks(
                 origin,
                 origin.getDirection(),
-                maxDistance,
+                this.maxDistance,
                 FluidCollisionMode.NEVER
         );
 

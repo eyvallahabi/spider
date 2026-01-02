@@ -2,7 +2,8 @@ package io.github.shiryu.spider.api.executable.targeter.impl.multi.location;
 
 import com.google.common.collect.Lists;
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
-import io.github.shiryu.spider.api.executable.targeter.ext.MultiTargeter;
+import io.github.shiryu.spider.api.executable.parseable.ParseContext;
+import io.github.shiryu.spider.api.executable.targeter.MultiTargeter;
 import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import io.github.shiryu.spider.api.location.SpiderLocation;
 import org.bukkit.Location;
@@ -13,21 +14,26 @@ import java.util.List;
 
 public class BlocksNearOriginTargeter implements MultiTargeter<Location> {
 
+    private String shape;
+    private double radius, radiusY,noise;
+    private boolean noAir, onlyAir;
+
+    @Override
+    public void initialize(@NotNull ParseContext context) {
+        this.shape = context.targeter().getOrDefault("shape", "sphere").toLowerCase();
+        this.radius = Double.parseDouble(context.targeter().getOrDefault("radius", "5.0"));
+        this.radiusY = Double.parseDouble(context.targeter().getOrDefault("radius_y", String.valueOf(this.radius)));
+        this.noise = Double.parseDouble(context.targeter().getOrDefault("noise", "0.0"));
+        this.noAir = Boolean.parseBoolean(context.targeter().getOrDefault("no_air", "false"));
+        this.onlyAir = Boolean.parseBoolean(context.targeter().getOrDefault("only_air", "false"));
+    }
+
     @Override
     public @Nullable List<Location> find(@NotNull Trigger trigger, @NotNull ExecutionContext context) {
         final Location origin = context.get("location");
 
         if (origin == null)
             return null;
-
-        final double radius = context.getOrSet("radius", 5.0);
-        final double radiusY = context.getOrSet("radius_y", radius);
-
-        final String shape = context.getOrSet("shape", "sphere").toLowerCase();
-
-        final double noise = context.getOrSet("noise", 0.0);
-        final boolean noAir = context.getOrSet("no_air", false);
-        final boolean onlyAir = context.getOrSet("only_air", false);
 
         return switch (shape) {
             case "sphere" -> SpiderLocation.from(origin).blocksInSphere(
