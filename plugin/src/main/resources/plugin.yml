@@ -5,5 +5,7 @@ main: io.github.shiryu.spider.SpiderPlugin
 api-version: 1.21
 softdepend:
   - AdvancedEnchantments
-
-commands:
+  - Vault
+  - PlaceholderAPI
+  - AuraSkills
+  - WorldGuard

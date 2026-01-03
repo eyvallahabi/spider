@@ -21,8 +21,22 @@ public class ExecutionContext {
     private final List<ExecutionContext> childs = Lists.newArrayList();
 
     @NotNull
-    public Entity caster(){
+    public Entity getCaster(){
         return this.getOrSet("caster", null);
+    }
+
+    @Nullable
+    public <T> T getTarget(){
+        final Object target = this.get("target");
+
+        if (target == null)
+            return null;
+
+        try{
+            return (T) target;
+        } catch (ClassCastException e){
+            return null;
+        }
     }
 
     @Nullable

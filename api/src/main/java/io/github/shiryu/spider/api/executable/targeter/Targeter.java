@@ -6,11 +6,13 @@ import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public interface Targeter<T> {
 
     void initialize(@NotNull final ParseContext context);
 
-    @Nullable
-    T find(@NotNull final Trigger trigger, @NotNull final ExecutionContext context);
+    @NotNull
+    List<T> find(@NotNull final Trigger trigger, @NotNull final ExecutionContext context);
 
 }

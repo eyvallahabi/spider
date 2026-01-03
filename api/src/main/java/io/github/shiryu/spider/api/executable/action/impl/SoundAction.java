@@ -11,6 +11,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @Parse(name = "sound", description = "Plays a sound at the target location or entity.")
 public class SoundAction implements Action {
 
@@ -27,8 +29,15 @@ public class SoundAction implements Action {
 
     @Override
     public void execute(@NotNull ExecutionContext context) {
-        final Object target = context.get("target");
+        final List<?> targets = context.getTarget();
 
+        if (targets == null)
+            return;
+
+        targets.forEach(this::playSound);
+    }
+
+    public void playSound(@NotNull final Object target){
         if (target instanceof Entity entity){
             entity.getWorld().playSound(
                     entity.getLocation(),
