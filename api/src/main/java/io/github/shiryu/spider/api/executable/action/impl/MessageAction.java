@@ -2,6 +2,7 @@ package io.github.shiryu.spider.api.executable.action.impl;
 
 import io.github.shiryu.spider.api.executable.action.Action;
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
+import io.github.shiryu.spider.api.executable.parseable.Parse;
 import io.github.shiryu.spider.api.executable.parseable.ParseContext;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Parse(name = "message", description = "Sends a message to the target players")
 public class MessageAction implements Action {
 
     private String message;

@@ -2,6 +2,7 @@ package io.github.shiryu.spider.api.executable.action.impl;
 
 import io.github.shiryu.spider.api.executable.action.Action;
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
+import io.github.shiryu.spider.api.executable.parseable.Parse;
 import io.github.shiryu.spider.api.executable.parseable.ParseContext;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Parse(name = "command", description = "Executes a command as the target players or console")
 public class CommandAction implements Action {
 
     private String command;

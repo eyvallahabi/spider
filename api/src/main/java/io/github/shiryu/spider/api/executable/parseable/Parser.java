@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class Parser {
             case ACTION ->{
                 final int index = token.indexOf('{');
                 final String name = token.substring(0, index);
-                final Map<String, String> args = parseArgs(token.substring(index));
+                final Map<String, Object> args = parseArgs(token.substring(index));
 
                 return new Parseable(ParseableType.ACTION, name, create(args));
             }
@@ -49,7 +50,7 @@ public class Parser {
                 if (token.contains("{")){
                     final int index = token.indexOf('{');
                     final String name = token.substring(0, index);
-                    final Map<String, String> args = parseArgs(token.substring(index));
+                    final Map<String, Object> args = parseArgs(token.substring(index));
 
                     return new Parseable(ParseableType.TRIGGER, name, create(args));
                 } else {
@@ -60,7 +61,7 @@ public class Parser {
                 if (token.contains("{")){
                     final int index = token.indexOf('{');
                     final String name = token.substring(0, index);
-                    final Map<String, String> args = parseArgs(token.substring(index));
+                    final Map<String, Object> args = parseArgs(token.substring(index));
 
                     return new Parseable(ParseableType.TARGETER, name, create(args));
                 } else {
@@ -73,19 +74,35 @@ public class Parser {
     }
 
     @NotNull
-    public List<ParseArgument> create(@NotNull final Map<String, String> map){
-        final List<ParseArgument> args = Lists.newArrayList();
+    public List<ParseArgument> create(@NotNull final Map<String, Object> args){
+        final List<ParseArgument> list = Lists.newArrayList();
 
-        for (final Map.Entry<String, String> entry : map.entrySet()){
-            args.add(new ParseArgument(entry.getKey(), entry.getValue()));
-        }
+        args.forEach((key, value) ->{
+            if (value instanceof String text){
+                list.add(new ParseArgument(key, text));
+            }else if (value instanceof Map<?, ?> map){
+                final List<ParseArgument> nested = Lists.newArrayList();
 
-        return args;
+                map.forEach((x, y) ->{
+                    if (!(x instanceof String k))
+                        return;
+
+                    if (!(y instanceof String v))
+                        return;
+
+                    nested.add(new ParseArgument(k, v));
+                });
+
+                list.add(new ParseArgument(key, "", nested));
+            }
+        });
+
+        return list;
     }
 
     @NotNull
-    public Map<String, String> parseArgs(@NotNull String block){
-        final Map<String, String> map = new HashMap<>();
+    public Map<String, Object> parseArgs(@NotNull String block) {
+        Map<String, Object> map = new HashMap<>();
 
         if (block.startsWith("{"))
             block = block.substring(1);
@@ -93,20 +110,75 @@ public class Parser {
         if (block.endsWith("}"))
             block = block.substring(0, block.length() - 1);
 
-        if (block.isBlank())
-            return map;
+        final List<String> parts = splitTopLevelArgs(block);
 
-        // hem "a=b;c=d" hem "a=b c=d" destekliyoruz
-        String normalized = block.replace(";", " ");
+        for (String part : parts) {
+            part = part.trim();
 
-        for (String entry : normalized.split(" ")) {
-            if (!entry.contains(":")) continue;
-            String[] kv = entry.split(":", 2);
-            map.put(kv[0].trim(), kv[1].trim());
+            if (part.isEmpty())
+                continue;
+
+            int braceIndex = part.indexOf('{');
+
+            if (braceIndex != -1) {
+                String key = part.substring(0, braceIndex).trim();
+                String nested = part.substring(braceIndex).trim();
+
+                map.put(key, parseArgs(nested)); // recursion
+                continue;
+            }
+
+            if (part.contains(":")) {
+                String[] kv = part.split(":", 2);
+
+                map.put(kv[0].trim(), kv[1].trim());
+                continue;
+            }
+
+            map.put(part, true);
         }
 
         return map;
     }
+
+    private List<String> splitTopLevelArgs(String s) {
+        List<String> parts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        int depth = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            if (c == '{') {
+                depth++;
+                current.append(c);
+                continue;
+            }
+
+            if (c == '}') {
+                depth--;
+                current.append(c);
+                continue;
+            }
+
+            // split points: ; or space when not in block
+            if ((c == ';' || c == ' ') && depth == 0) {
+                if (!current.isEmpty()) {
+                    parts.add(current.toString());
+                    current.setLength(0);
+                }
+                continue;
+            }
+
+            current.append(c);
+        }
+
+        if (!current.isEmpty())
+            parts.add(current.toString());
+
+        return parts;
+    }
+
 
     @NotNull
     public List<String> tokenize(@NotNull final String line){

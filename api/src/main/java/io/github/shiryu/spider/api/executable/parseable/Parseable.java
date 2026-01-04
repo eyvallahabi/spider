@@ -1,12 +1,14 @@
 package io.github.shiryu.spider.api.executable.parseable;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @RequiredArgsConstructor
@@ -21,6 +23,26 @@ public class Parseable {
         this.type = type;
         this.name = name;
         this.arguments.addAll(arguments);
+    }
+
+    @NotNull
+    public Map<String, Map<String, String>> getRequirements(){
+        final Map<String, Map<String, String>> requirements = Maps.newHashMap();
+
+        for (final ParseArgument argument : this.arguments){
+            if (argument.getNested().isEmpty())
+                continue;
+
+            final Map<String, String> arguments = Maps.newHashMap();
+
+            for (final ParseArgument nested : argument.getNested()){
+                arguments.put(nested.getName(), nested.getValue());
+            }
+
+            requirements.put(argument.getName(), arguments);
+        }
+
+        return requirements;
     }
 
     @Nullable

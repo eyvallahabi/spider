@@ -1,9 +1,11 @@
 package io.github.shiryu.spider.api.registry;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.github.shiryu.spider.api.executable.Executable;
 import io.github.shiryu.spider.api.executable.parseable.*;
+import io.github.shiryu.spider.api.executable.requirement.Requirement;
 import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
@@ -11,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -26,12 +29,34 @@ public class ExecutableRegistry {
         final Executable executable = new Executable(
                 create(plugin, ParseableType.ACTION, context),
                 create(plugin, ParseableType.TARGETER, context),
-                create(plugin, ParseableType.TRIGGER, context)
+                create(plugin, ParseableType.TRIGGER, context),
+                createRequirements(context)
         );
 
         this.executables.add(executable);
 
         return executable;
+    }
+
+    @NotNull
+    private Map<ParseableType, Requirement> createRequirements(@NotNull final ParseContext context){
+        final Map<ParseableType, Requirement> requirements = Maps.newHashMap();
+
+        for (final ParseableType type : ParseableType.values()){
+            final Parseable parseable = context.byType(type).orElse(null);
+
+            if (parseable == null)
+                continue;
+
+            final Map<String, Map<String, String>> parsed = parseable.getRequirements();
+
+            if (parsed.isEmpty())
+                continue;
+
+            //TODO CREATE REQUIREMENTS FROM PARSED MAP
+        }
+
+        return requirements;
     }
 
     @NotNull
