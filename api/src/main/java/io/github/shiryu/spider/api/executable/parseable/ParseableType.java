@@ -4,5 +4,6 @@ public enum ParseableType {
 
     ACTION,
     TARGETER,
-    TRIGGER
+    TRIGGER,
+    REQUIREMENT
 }

@@ -10,6 +10,7 @@ import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -39,10 +40,12 @@ public class ExecutableRegistry {
     }
 
     @NotNull
-    private Map<ParseableType, Requirement> createRequirements(@NotNull final ParseContext context){
-        final Map<ParseableType, Requirement> requirements = Maps.newHashMap();
+    private Map<ParseableType, List<Requirement>> createRequirements(@NotNull final ParseContext context){
+        final Map<ParseableType, List<Requirement>> result = Maps.newHashMap();
 
         for (final ParseableType type : ParseableType.values()){
+            final List<Requirement> requirements = Lists.newArrayList();
+
             final Parseable parseable = context.byType(type).orElse(null);
 
             if (parseable == null)
@@ -53,10 +56,41 @@ public class ExecutableRegistry {
             if (parsed.isEmpty())
                 continue;
 
-            //TODO CREATE REQUIREMENTS FROM PARSED MAP
+            parsed.forEach((name, data) ->{
+                final ParsedHolder holder = this.getRequirement(name);
+
+                if (holder == null)
+                    return;
+
+                final Requirement requirement = holder.create();
+
+                try{
+                    final Method method = requirement.getClass().getMethod("initialize", Map.class);
+
+                    method.invoke(requirement, data);
+                }catch (final Exception exception){
+                    return;
+                }
+
+                requirements.add(requirement);
+            });
+
+            result.put(type, requirements);
         }
 
-        return requirements;
+        return result;
+    }
+
+    @Nullable
+    public ParsedHolder getRequirement(@NotNull final String name){
+        final List<ParsedHolder> holders = this.getHolders(ParseableType.REQUIREMENT);
+
+        for (final ParsedHolder holder : holders) {
+            if (holder.matches(name))
+                return holder;
+        }
+
+        return null;
     }
 
     @NotNull

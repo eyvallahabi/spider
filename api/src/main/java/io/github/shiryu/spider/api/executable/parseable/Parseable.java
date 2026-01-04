@@ -26,6 +26,22 @@ public class Parseable {
     }
 
     @NotNull
+    public Map<String, String> getArgumentsForRequirement(@NotNull final String name){
+        final ParseArgument argument = find(name);
+
+        if(argument == null)
+            return Maps.newHashMap();
+
+        final Map<String, String> arguments = Maps.newHashMap();
+
+        for (final ParseArgument nested : argument.getNested()){
+            arguments.put(nested.getName(), nested.getValue());
+        }
+
+        return arguments;
+    }
+
+    @NotNull
     public Map<String, Map<String, String>> getRequirements(){
         final Map<String, Map<String, String>> requirements = Maps.newHashMap();
 

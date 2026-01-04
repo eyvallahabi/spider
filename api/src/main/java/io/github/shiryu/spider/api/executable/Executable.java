@@ -3,6 +3,7 @@ package io.github.shiryu.spider.api.executable;
 import io.github.shiryu.spider.api.executable.action.Action;
 import io.github.shiryu.spider.api.executable.context.ExecutionContext;
 import io.github.shiryu.spider.api.executable.context.ExecutionContextBuilder;
+import io.github.shiryu.spider.api.executable.parseable.Parseable;
 import io.github.shiryu.spider.api.executable.parseable.ParseableType;
 import io.github.shiryu.spider.api.executable.requirement.Requirement;
 import io.github.shiryu.spider.api.executable.targeter.Targeter;
@@ -10,6 +11,7 @@ import io.github.shiryu.spider.api.executable.trigger.Trigger;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -23,12 +25,12 @@ public class Executable {
     private final Targeter targeter;
     private final Trigger trigger;
 
-    private final Map<ParseableType, Requirement> requirements;
+    private final Map<ParseableType, List<Requirement>> requirements;
 
     public Executable(@NotNull final Action action,
                       @NotNull final Targeter targeter,
                       @NotNull final Trigger trigger,
-                      @NotNull final Map<ParseableType, Requirement> requirements){
+                      @NotNull final Map<ParseableType, List<Requirement>> requirements){
         this.uuid = UUID.randomUUID();
         this.action = action;
         this.targeter = targeter;
@@ -36,14 +38,41 @@ public class Executable {
         this.requirements = requirements;
     }
 
+    public boolean control(@NotNull final ParseableType type, @NotNull final ExecutionContext context){
+        final List<Requirement> requirements = this.requirements.get(type);
+
+        if (requirements == null || requirements.isEmpty())
+            return true;
+
+        boolean result = true;
+
+        for (final Requirement requirement : requirements) {
+            result = result && requirement.control(context);
+        }
+
+        return result;
+
+    }
+
     public void accept(@NotNull final Trigger trigger, @NotNull ExecutionContext context){
         if (!Objects.equals(trigger, this.trigger))
             return;
 
-        context = ExecutionContextBuilder.from(context)
-                .add("target", this.targeter.find(trigger, context))
-                .build();
+        if (!this.control(ParseableType.TRIGGER, context))
+            return;
 
-        this.action.execute(context);
+        if (this.control(ParseableType.TARGETER, context)){
+            context = ExecutionContextBuilder.from(context)
+                    .add("target", this.targeter.find(trigger, context))
+                    .build();
+
+            this.action.execute(context);
+        }else{
+            context = ExecutionContextBuilder.from(context)
+                    .add("target", context.getCaster())
+                    .build();
+
+            this.action.execute(context);
+        }
     }
 }
