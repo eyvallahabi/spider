@@ -1,6 +1,8 @@
 package io.github.shiryu.spider.api.config.impl;
 
+import com.google.common.collect.Maps;
 import io.github.shiryu.spider.api.config.Config;
+import io.github.shiryu.spider.api.config.serializer.ConfigSerializer;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 @Getter
 public class ResourceConfig implements Config {
@@ -20,27 +23,43 @@ public class ResourceConfig implements Config {
 
     private final File file;
 
+    private final Map<Class<?>, ConfigSerializer<?>> serializers;
+
     private BasicConfig config;
 
     public ResourceConfig(@NotNull final Plugin plugin,
                           @NotNull final String name,
-                          @NotNull final String path) {
+                          @NotNull final String path,
+                          @NotNull final Map<Class<?>, ConfigSerializer<?>> serializers) {
         this.plugin = plugin;
         this.name = name;
         this.path = path;
+        this.serializers = Maps.newHashMap(serializers);
 
         this.file = new File(plugin.getDataFolder().getAbsolutePath() + "/" + path + "/" + name);
     }
 
     public ResourceConfig(@NotNull final Plugin plugin,
-                          @NotNull final String name) {
-        this(plugin, name, "");
+                          @NotNull final String name,
+                          @NotNull final Map<Class<?>, ConfigSerializer<?>> serializers) {
+        this(plugin, name, "", serializers);
+    }
+
+    public ResourceConfig(@NotNull final Plugin plugin,
+                          @NotNull final String name){
+        this(plugin, name, "", Maps.newHashMap());
+    }
+
+    public ResourceConfig(@NotNull final Plugin plugin,
+                          @NotNull final String name,
+                          @NotNull final String path){
+        this(plugin, name, path, Maps.newHashMap());
     }
 
     @Override
     public boolean create() {
         if (this.file.exists()){
-            this.config = new BasicConfig(this.file);
+            this.config = new BasicConfig(this.file, this.serializers);
             this.config.load();
 
             return true;
@@ -57,14 +76,12 @@ public class ResourceConfig implements Config {
             stream = this.plugin.getResource(this.path.replaceAll("/", "") + "/" + this.name);
         }
 
-        if (stream == null){
-            System.out.println("Stream is null for resource config: " + this.name);
+        if (stream == null)
             return false;
-        }
 
         this.copy(stream, this.file);
 
-        this.config = new BasicConfig(this.file);
+        this.config = new BasicConfig(this.file, this.serializers);
         this.config.load();
 
         return true;

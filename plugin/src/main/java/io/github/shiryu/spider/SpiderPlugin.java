@@ -1,9 +1,7 @@
 package io.github.shiryu.spider;
 
-import io.github.shiryu.spider.api.config.Configs;
 import io.github.shiryu.spider.api.executable.action.impl.SoundAction;
 import io.github.shiryu.spider.api.executable.parseable.ParseableType;
-import io.github.shiryu.spider.api.executable.parseable.Parser;
 import io.github.shiryu.spider.api.executable.targeter.impl.entity.NearestPlayerTargeter;
 import io.github.shiryu.spider.api.executable.trigger.impl.event.InteractTrigger;
 import io.github.shiryu.spider.api.factory.Factories;

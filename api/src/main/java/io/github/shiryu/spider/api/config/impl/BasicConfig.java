@@ -1,7 +1,7 @@
 package io.github.shiryu.spider.api.config.impl;
 
+import com.google.common.collect.Maps;
 import io.github.shiryu.spider.api.config.Config;
-import io.github.shiryu.spider.api.config.Configs;
 import io.github.shiryu.spider.api.config.serializer.ConfigSerializer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +11,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Map;
 
 @Getter
 @RequiredArgsConstructor
 public class BasicConfig implements Config {
 
     private final File file;
+    private final Map<Class<?>, ConfigSerializer<?>> serializers;
+
     private YamlConfiguration configuration;
+
+    public BasicConfig(@NotNull final File file){
+        this(file, Maps.newHashMap());
+    }
 
     @Override
     public @NotNull String getName() {
@@ -70,7 +77,7 @@ public class BasicConfig implements Config {
 
     @Override
     public void set(@NotNull String path, Object value) {
-        final ConfigSerializer serializer = Configs.getSerializer(value.getClass());
+        final ConfigSerializer serializer = getSerializer(value.getClass());
 
         if (serializer != null){
             serializer.set(this, path, value);
@@ -87,7 +94,7 @@ public class BasicConfig implements Config {
 
     @Override
     public <T> T get(@NotNull String path, @NotNull Class<T> clazz) {
-        final ConfigSerializer<T> serializer = Configs.getSerializer(clazz);
+        final ConfigSerializer<T> serializer = getSerializer(clazz);
 
         if (serializer == null)
             return null;
@@ -103,5 +110,11 @@ public class BasicConfig implements Config {
             return null;
 
         return new Section(this, section);
+    }
+
+    @Nullable
+    public <T> ConfigSerializer<T> getSerializer(@NotNull final Class<T> clazz){
+        //noinspection unchecked
+        return (ConfigSerializer<T>) this.serializers.get(clazz);
     }
 }

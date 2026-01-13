@@ -12,11 +12,16 @@ import io.github.shiryu.spider.util.ItemBuilder;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class ItemStackSerializer implements ConfigSerializer<ItemStack> {
 
@@ -62,6 +67,22 @@ public class ItemStackSerializer implements ConfigSerializer<ItemStack> {
 
                 return meta;
             });
+        }
+
+        if (config.contains(path + ".flags")){
+            final List<ItemFlag> flags = config.getOrSet(path + ".flags", new ArrayList<String>())
+                    .stream()
+                    .map(x -> {
+                        try {
+                            return ItemFlag.valueOf(x);
+                        } catch (final IllegalArgumentException e){
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
+
+            builder.flags(flags.toArray(new ItemFlag[0]));
         }
 
         if (text.startsWith("LEATHER_")){
