@@ -6,6 +6,7 @@ import io.github.shiryu.spider.api.executable.variable.Variable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,11 @@ public class ExecutionContext {
     @NotNull
     public Entity getCaster(){
         return this.getOrSet("caster", null);
+    }
+
+    @NotNull
+    public Event getEvent(){
+        return this.getOrSet("event", null);
     }
 
     @Nullable
