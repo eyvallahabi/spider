@@ -8,10 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public record Section(Config parent, ConfigurationSection section) implements Config {
+public record Section(Config parent, ConfigurationSection section, Map<Class<?>, ConfigSerializer<?>> serializers) implements Config {
 
     @Override
     public @NotNull String getName() {
@@ -30,7 +31,7 @@ public record Section(Config parent, ConfigurationSection section) implements Co
 
     @Override
     public void set(@NotNull String path, Object value) {
-        final ConfigSerializer serializer = Configs.getSerializer(value.getClass());
+        final ConfigSerializer serializer = getSerializer(value.getClass());
 
         if (serializer != null){
             serializer.set(this, path, value);
@@ -47,7 +48,7 @@ public record Section(Config parent, ConfigurationSection section) implements Co
 
     @Override
     public <T> T get(@NotNull String path, @NotNull Class<T> clazz) {
-        final ConfigSerializer<T> serializer = Configs.getSerializer(clazz);
+        final ConfigSerializer<T> serializer = getSerializer(clazz);
 
         if (serializer == null)
             return null;
@@ -57,7 +58,13 @@ public record Section(Config parent, ConfigurationSection section) implements Co
 
     @Override
     public @NotNull Section getSection(@NotNull String path) {
-        return new Section(this, this.section.getConfigurationSection(path));
+        return new Section(this, this.section.getConfigurationSection(path), this.serializers);
+    }
+
+    @Nullable
+    public <T> ConfigSerializer<T> getSerializer(@NotNull final Class<T> clazz){
+        //noinspection unchecked
+        return (ConfigSerializer<T>) this.serializers.get(clazz);
     }
 
     @NotNull

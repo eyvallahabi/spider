@@ -39,7 +39,7 @@ public class SQLStorage<T> implements Storage<T> {
             this.createTable(this.type);
 
         try{
-            final Map<String, String> columns = Maps.newHashMap();
+            final Map<String, Object> columns = Maps.newHashMap();
 
             for (final Field field : object.getClass().getDeclaredFields()){
                 if (field.getAnnotation(Skip.class) != null)
@@ -50,15 +50,7 @@ public class SQLStorage<T> implements Storage<T> {
                 final String columnName = field.getName();
                 final Object value = field.get(object);
 
-                String valueString;
-
-                if (value instanceof String){
-                    valueString = "'" + value + "'";
-                }else{
-                    valueString = String.valueOf(value);
-                }
-
-                columns.put(columnName, valueString);
+                columns.put(columnName, value);
             }
 
             this.connection.replace(object.getClass().getSimpleName().toLowerCase(Locale.ENGLISH) + "s", columns);
@@ -139,6 +131,7 @@ public class SQLStorage<T> implements Storage<T> {
         this.connection.createTable(
                 this.getTableName(),
                 Arrays.stream(type.getDeclaredFields())
+                        .filter(field -> field.getAnnotation(Skip.class) == null)
                         .map(field -> {
                             String columnType;
 
@@ -159,7 +152,7 @@ public class SQLStorage<T> implements Storage<T> {
                             }else if (fieldType == float.class || fieldType == Float.class){
                                 columnType = "FLOAT";
                             }else if (fieldType == UUID.class){
-                                columnType = "VARCHAR(36)";
+                                columnType = "VARCHAR(36) PRIMARY KEY";
                             }else{
                                 throw new RuntimeException("Unsupported field type " + fieldType.getSimpleName() + " for SQL storage");
                             }

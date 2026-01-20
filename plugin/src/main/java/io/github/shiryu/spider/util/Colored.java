@@ -1,11 +1,16 @@
 package io.github.shiryu.spider.util;
 
 import lombok.experimental.UtilityClass;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -14,6 +19,31 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public final class Colored {
+
+	@NotNull
+	public Component component(@NotNull final String text){
+		return MiniMessage.miniMessage().deserialize(text)
+				.decoration(TextDecoration.ITALIC, false);
+	}
+
+	@NotNull
+	public String pretty(@NotNull final Enum<?> enumeration){
+		final String name = enumeration.name().toLowerCase(Locale.ENGLISH);
+		final String[] parts = name.split("_");
+
+		final StringBuilder sb = new StringBuilder();
+
+		for (final String part : parts){
+			if (part.isEmpty())
+				continue;
+
+			sb.append(Character.toUpperCase(part.charAt(0)))
+					.append(part.substring(1))
+					.append(" ");
+		}
+
+		return sb.toString().trim();
+	}
 
 	@NotNull
 	public String vanilla(@NotNull final String text) {

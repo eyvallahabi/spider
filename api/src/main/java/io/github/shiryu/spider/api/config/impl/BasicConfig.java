@@ -109,7 +109,7 @@ public class BasicConfig implements Config {
         if (section == null)
             return null;
 
-        return new Section(this, section);
+        return new Section(this, section, this.serializers);
     }
 
     @Nullable

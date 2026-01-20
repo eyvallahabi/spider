@@ -6,10 +6,9 @@ import lombok.Setter;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.Map;
+import java.util.StringJoiner;
 
 @Getter
 @Setter
@@ -44,58 +43,63 @@ public abstract class AbstractSQLConnection implements StorageConnection {
         }
     }
 
-    public void replace(@NotNull final String table, @NotNull final Map<String, String> columns){
-        final StringBuilder columnsPart = new StringBuilder();
-        final StringBuilder valuesPart = new StringBuilder();
+    public void replace(@NotNull final String table, @NotNull final Map<String, Object> columns) {
+        final StringJoiner keys = new StringJoiner(", ");
+        final StringJoiner placeholders = new StringJoiner(", ");
 
-        int i = 0;
-        for (Map.Entry<String, String> entry : columns.entrySet()) {
-            columnsPart.append(entry.getKey());
-            valuesPart.append(entry.getValue());
-
-            if (i < columns.size() - 1) {
-                columnsPart.append(", ");
-                valuesPart.append(", ");
-            }
-            i++;
+        for (String key : columns.keySet()) {
+            keys.add(key);
+            placeholders.add("?");
         }
 
-        final String query = "REPLACE INTO " + table + " (" + columnsPart + ") VALUES (" + valuesPart + ");";
-        execute(query);
+        final String sql = "REPLACE INTO " + table + " (" + keys + ") VALUES (" + placeholders + ");";
+
+        try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+            int index = 1;
+            for (Object value : columns.values()) {
+                ps.setObject(index++, value);
+            }
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to execute REPLACE for table " + table, e);
+        }
     }
 
-    public void insert(@NotNull final String table, @NotNull final Map<String, String> columns){
-        final StringBuilder columnsPart = new StringBuilder();
-        final StringBuilder valuesPart = new StringBuilder();
+    public void insert(@NotNull final String table, @NotNull final Map<String, Object> columns) {
+        final StringJoiner keys = new StringJoiner(", ");
+        final StringJoiner placeholders = new StringJoiner(", ");
 
-        int i = 0;
-        for (Map.Entry<String, String> entry : columns.entrySet()) {
-            columnsPart.append(entry.getKey());
-            valuesPart.append(entry.getValue());
-
-            if (i < columns.size() - 1) {
-                columnsPart.append(", ");
-                valuesPart.append(", ");
-            }
-            i++;
+        for (String key : columns.keySet()) {
+            keys.add(key);
+            placeholders.add("?");
         }
 
-        final String query = "INSERT INTO " + table + " (" + columnsPart + ") VALUES (" + valuesPart + ");";
-        execute(query);
+        final String sql = "INSERT INTO " + table + " (" + keys + ") VALUES (" + placeholders + ");";
+
+        try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+            int index = 1;
+            for (Object value : columns.values()) {
+                ps.setObject(index++, value);
+            }
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to execute INSERT for table " + table, e);
+        }
     }
 
-    public boolean contains(@NotNull final String table, @NotNull final String column, @NotNull final String value){
-        try{
-            final String query = "SELECT COUNT(*) AS count FROM " + table + " WHERE " + column + " = '" + value + "';";
-            final var statement = this.connection.createStatement();
-            final var resultSet = statement.executeQuery(query);
+    public boolean contains(@NotNull final String table, @NotNull final String column, @NotNull final String value) {
+        final String sql = "SELECT COUNT(*) AS count FROM " + table + " WHERE " + column + " = ?";
 
-            if(resultSet.next()){
-                return resultSet.getInt("count") > 0;
+        try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+            ps.setString(1, value);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("count") > 0;
+                }
             }
-        }catch (final Exception ignored){
+        } catch (Exception ignored) {}
 
-        }
         return false;
     }
 
