@@ -43,6 +43,36 @@ public abstract class AbstractSQLConnection implements StorageConnection {
         }
     }
 
+    public void upsert(@NotNull final String table, @NotNull final Map<String, Object> columns) {
+        try {
+            final StringJoiner keys = new StringJoiner(", ");
+            final StringJoiner placeholders = new StringJoiner(", ");
+            final StringJoiner updates = new StringJoiner(", ");
+
+            for (String key : columns.keySet()) {
+                keys.add(key);
+                placeholders.add("?");
+
+                // key = VALUES(key)
+                updates.add(key + " = VALUES(" + key + ")");
+            }
+
+            final String sql =
+                    "INSERT INTO " + table + " (" + keys + ") VALUES (" + placeholders + ") "
+                            + "ON DUPLICATE KEY UPDATE " + updates + ";";
+
+            try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+                int index = 1;
+                for (Object value : columns.values()) {
+                    ps.setObject(index++, value);
+                }
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to execute UPSERT for table " + table, e);
+        }
+    }
+
     public void replace(@NotNull final String table, @NotNull final Map<String, Object> columns) {
         final StringJoiner keys = new StringJoiner(", ");
         final StringJoiner placeholders = new StringJoiner(", ");
@@ -101,6 +131,17 @@ public abstract class AbstractSQLConnection implements StorageConnection {
         } catch (Exception ignored) {}
 
         return false;
+    }
+
+    public boolean tableExists(String tableName) {
+        try {
+            DatabaseMetaData meta = this.connection.getMetaData();
+            try (ResultSet rs = meta.getTables(null, null, tableName, null)) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to check if table exists: " + tableName, e);
+        }
     }
 
     public boolean contains(@NotNull final String table){

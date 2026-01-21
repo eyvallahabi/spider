@@ -14,10 +14,7 @@ import org.jspecify.annotations.NonNull;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -26,7 +23,88 @@ public class SQLStorage<T> implements Storage<T> {
     private final AbstractSQLConnection connection;
     private final Class<T> type;
 
-    private final Map<UUID, T> all = Maps.newHashMap();
+    @Override
+    public Map<UUID, T> getAll(){
+        final Map<UUID, T> result = new HashMap<>();
+
+        final Storable storable = this.type.getAnnotation(Storable.class);
+        if (storable == null)
+            throw new RuntimeException("Missing @Storable annotation on " + type.getSimpleName());
+
+        final String identifier = storable.identifier();
+
+        final String sql = "SELECT * FROM " + this.getTableName() + ";";
+
+        try(final PreparedStatement ps  = this.connection.getConnection().prepareStatement(sql)){
+            final ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                // 1) Önce UUID'yi oku (identifier sütunu)
+                final String uuidString = rs.getString(identifier);
+                if (uuidString == null)
+                    throw new RuntimeException("Identifier column " + identifier + " is NULL in table " + this.getTableName());
+
+                final UUID id = UUID.fromString(uuidString);
+
+                // 2) UUID constructor ile instance yarat
+                final T instance = type.getDeclaredConstructor(UUID.class).newInstance(id);
+
+                // 3) Diğer field'ları doldur
+                for (Field field : type.getDeclaredFields()) {
+                    if (field.getAnnotation(Skip.class) != null)
+                        continue;
+
+                    final String columnName = field.getName();
+                    if (columnName.equals(identifier))
+                        continue;  // UUID zaten constructor'da setlendi
+
+                    field.setAccessible(true);
+                    final Class<?> fieldType = field.getType();
+
+                    Object value = null;
+
+                    if (fieldType == String.class) {
+                        value = rs.getString(columnName);
+
+                    } else if (fieldType == int.class || fieldType == Integer.class) {
+                        value = rs.getInt(columnName);
+
+                    } else if (fieldType == long.class || fieldType == Long.class) {
+                        value = rs.getLong(columnName);
+
+                    } else if (fieldType == boolean.class || fieldType == Boolean.class) {
+                        value = rs.getBoolean(columnName);
+
+                    } else if (fieldType == double.class || fieldType == Double.class) {
+                        value = rs.getDouble(columnName);
+
+                    } else if (fieldType == float.class || fieldType == Float.class) {
+                        value = rs.getFloat(columnName);
+
+                    } else if (fieldType == UUID.class) {
+                        String raw = rs.getString(columnName);
+                        value = raw != null ? UUID.fromString(raw) : null;
+
+                    } else if (Factories.supports(fieldType)) {
+                        String raw = rs.getString(columnName);
+                        if (raw != null)
+                            value = Factories.deserialize(raw, fieldType);
+                    } else {
+                        throw new RuntimeException("Unsupported field type: " + fieldType.getSimpleName());
+                    }
+
+                    field.set(instance, value);
+                }
+
+                // 4) Map'e koy
+                result.put(id, instance);
+            }
+        }catch (final Exception exception){
+            throw new RuntimeException("Failed to load all rows for " + this.getTableName(), exception);
+        }
+
+        return result;
+    }
 
     @Override
     public void save(@NonNull T object) {
@@ -35,7 +113,7 @@ public class SQLStorage<T> implements Storage<T> {
         if (storable == null)
             return;
 
-        if (!this.connection.contains(this.getTableName()))
+        if (!this.connection.tableExists(this.getTableName()))
             this.createTable(this.type);
 
         try{
@@ -48,12 +126,19 @@ public class SQLStorage<T> implements Storage<T> {
                 field.setAccessible(true);
 
                 final String columnName = field.getName();
-                final Object value = field.get(object);
+                Object value = field.get(object);
+
+                if (value instanceof UUID)
+                    value = value.toString();
+                else if (value instanceof Enum<?> enumVal)
+                    value = enumVal.name();
+                else if (Factories.supports(value.getClass()))
+                    value = Factories.getFactory(value.getClass()).serialize(value);
 
                 columns.put(columnName, value);
             }
 
-            this.connection.replace(object.getClass().getSimpleName().toLowerCase(Locale.ENGLISH) + "s", columns);
+            this.connection.upsert(object.getClass().getSimpleName().toLowerCase(Locale.ENGLISH) + "s", columns);
         }catch (final Exception exception){
             throw new RuntimeException("Failed to save object " + object.getClass().getSimpleName(), exception);
         }
@@ -72,7 +157,7 @@ public class SQLStorage<T> implements Storage<T> {
     public T load(@NotNull UUID identifier) {
         final String query = "SELECT * FROM " + this.getTableName() + " WHERE uuid = ?;";
 
-        if (!this.connection.contains(this.getTableName()))
+        if (!this.connection.tableExists(this.getTableName()))
             this.createTable(this.type);
 
         try{
@@ -118,8 +203,6 @@ public class SQLStorage<T> implements Storage<T> {
                     }
                 }
 
-                this.all.put(identifier, instance);
-
                 return instance;
             }
         }catch (final Exception exception){
@@ -127,40 +210,54 @@ public class SQLStorage<T> implements Storage<T> {
         }
     }
 
-    private void createTable(@NotNull final Class<?> type){
-        this.connection.createTable(
-                this.getTableName(),
-                Arrays.stream(type.getDeclaredFields())
-                        .filter(field -> field.getAnnotation(Skip.class) == null)
-                        .map(field -> {
-                            String columnType;
+    private void createTable(@NotNull final Class<?> type) {
+        final Storable storable = type.getAnnotation(Storable.class);
+        if (storable == null)
+            return;
 
-                            final Class<?> fieldType = field.getType();
+        final String identifier = storable.identifier();
+        final List<String> columns = new ArrayList<>();
 
-                            if (Factories.supports(fieldType)){
-                                columnType = "TEXT";
-                            }else if (fieldType == String.class){
-                                columnType = "TEXT";
-                            }else if (fieldType == int.class || fieldType == Integer.class){
-                                columnType = "INT";
-                            }else if (fieldType == long.class || fieldType == Long.class){
-                                columnType = "BIGINT";
-                            }else if (fieldType == boolean.class || fieldType == Boolean.class){
-                                columnType = "BOOLEAN";
-                            }else if (fieldType == double.class || fieldType == Double.class){
-                                columnType = "DOUBLE";
-                            }else if (fieldType == float.class || fieldType == Float.class){
-                                columnType = "FLOAT";
-                            }else if (fieldType == UUID.class){
-                                columnType = "VARCHAR(36) PRIMARY KEY";
-                            }else{
-                                throw new RuntimeException("Unsupported field type " + fieldType.getSimpleName() + " for SQL storage");
-                            }
+        for (Field field : type.getDeclaredFields()) {
+            if (field.getAnnotation(Skip.class) != null)
+                continue;
 
-                            return field.getName() + " " + columnType;
-                        })
-                        .toArray(String[]::new)
-        );
+            String columnName = field.getName();
+            Class<?> fieldType = field.getType();
+            String columnType;
+
+            if (fieldType == UUID.class) {
+                columnType = "VARCHAR(36)";
+            } else if (Factories.supports(fieldType)) {
+                columnType = "TEXT";
+            } else if (fieldType == String.class) {
+                columnType = "TEXT";
+            } else if (fieldType == int.class || fieldType == Integer.class) {
+                columnType = "INT";
+            } else if (fieldType == long.class || fieldType == Long.class) {
+                columnType = "BIGINT";
+            } else if (fieldType == boolean.class || fieldType == Boolean.class) {
+                columnType = "BOOLEAN";
+            } else if (fieldType == double.class || fieldType == Double.class) {
+                columnType = "DOUBLE";
+            } else if (fieldType == float.class || fieldType == Float.class) {
+                columnType = "FLOAT";
+            } else {
+                throw new RuntimeException("Unsupported field type " + fieldType.getSimpleName());
+            }
+
+            // Identifier olan alan NOT NULL olacak
+            if (columnName.equals(identifier)) {
+                columnType += " NOT NULL";
+            }
+
+            columns.add(columnName + " " + columnType);
+        }
+
+        // PRIMARY KEY alanını en sona ekliyoruz
+        columns.add("PRIMARY KEY (" + identifier + ")");
+
+        this.connection.createTable(this.getTableName(), columns.toArray(new String[0]));
     }
 
     private String getTableName(){
