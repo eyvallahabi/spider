@@ -1,5 +1,6 @@
 package io.github.shiryu.spider.api.storage.connection.impl.sql;
 
+import com.google.common.collect.Sets;
 import io.github.shiryu.spider.api.storage.connection.StorageConnection;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +8,9 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 @Getter
@@ -15,6 +18,8 @@ import java.util.StringJoiner;
 public abstract class AbstractSQLConnection implements StorageConnection {
 
     protected Connection connection;
+
+    private final Set<String> existingTables = Sets.newHashSet();
 
 
     @Override
@@ -134,6 +139,9 @@ public abstract class AbstractSQLConnection implements StorageConnection {
     }
 
     public boolean tableExists(String tableName) {
+        if (this.existingTables.contains(tableName))
+            return true;
+
         try {
             DatabaseMetaData meta = this.connection.getMetaData();
             try (ResultSet rs = meta.getTables(null, null, tableName, null)) {

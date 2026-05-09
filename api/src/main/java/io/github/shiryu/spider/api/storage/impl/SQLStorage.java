@@ -113,9 +113,6 @@ public class SQLStorage<T> implements Storage<T> {
         if (storable == null)
             return;
 
-        if (!this.connection.tableExists(this.getTableName()))
-            this.createTable(this.type);
-
         try{
             final Map<String, Object> columns = Maps.newHashMap();
 
@@ -156,9 +153,6 @@ public class SQLStorage<T> implements Storage<T> {
     @Override
     public T load(@NotNull UUID identifier) {
         final String query = "SELECT * FROM " + this.getTableName() + " WHERE uuid = ?;";
-
-        if (!this.connection.tableExists(this.getTableName()))
-            this.createTable(this.type);
 
         try{
             final T instance = this.type.getConstructor(UUID.class).newInstance(identifier);
