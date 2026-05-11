@@ -23,6 +23,8 @@ public class SQLStorage<T> implements Storage<T> {
     private final AbstractSQLConnection connection;
     private final Class<T> type;
 
+    private boolean tableCreated = false;
+
     @Override
     public Map<UUID, T> getAll(){
         final Map<UUID, T> result = new HashMap<>();
@@ -112,6 +114,11 @@ public class SQLStorage<T> implements Storage<T> {
 
         if (storable == null)
             return;
+
+        if (!tableCreated && !this.connection.tableExists(this.getTableName())){
+            this.createTable(object.getClass());
+            this.tableCreated = true;
+        }
 
         try{
             final Map<String, Object> columns = Maps.newHashMap();
