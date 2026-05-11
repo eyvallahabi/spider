@@ -57,8 +57,13 @@ public record Section(Config parent, ConfigurationSection section, Map<Class<?>,
     }
 
     @Override
-    public @NotNull Section getSection(@NotNull String path) {
-        return new Section(this, this.section.getConfigurationSection(path), this.serializers);
+    public @Nullable Section getSection(@NotNull String path) {
+        final ConfigurationSection section = this.section.getConfigurationSection(path);
+
+        if (section == null)
+            return null;
+
+        return new Section(this, section, this.serializers);
     }
 
     @Nullable

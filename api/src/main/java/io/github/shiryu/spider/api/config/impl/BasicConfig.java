@@ -77,14 +77,18 @@ public class BasicConfig implements Config {
 
     @Override
     public void set(@NotNull String path, Object value) {
-        final ConfigSerializer serializer = getSerializer(value.getClass());
+        if (value != null){
+            final ConfigSerializer serializer = getSerializer(value.getClass());
 
-        if (serializer != null){
-            serializer.set(this, path, value);
+            if (serializer != null){
+                serializer.set(this, path, value);
+                return;
+            }
+            this.configuration.set(path, value);
             return;
         }
 
-        this.configuration.set(path, value);
+        this.configuration.set(path, null);
     }
 
     @Override

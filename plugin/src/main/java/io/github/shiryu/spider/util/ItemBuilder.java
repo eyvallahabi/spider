@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.map.MapView;
-import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
@@ -159,6 +158,9 @@ public class ItemBuilder {
     @NotNull
     public final ItemBuilder updateLore(@NotNull final Function<List<String>, List<String>> function){
         return this.update(itemMeta ->{
+            if (itemMeta == null)
+                return;
+
             if (!(itemMeta.hasLore()))
                 itemMeta.setLore(Colored.convert(function.apply(new ArrayList<>())));
 
