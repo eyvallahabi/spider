@@ -7,7 +7,6 @@ import io.github.shiryu.spider.api.executable.trigger.impl.event.InteractTrigger
 import io.github.shiryu.spider.api.factory.Factories;
 import io.github.shiryu.spider.api.registry.Registries;
 import io.github.shiryu.spider.integration.economy.EconomyIntegration;
-import io.github.shiryu.spider.integration.enchantment.ae.AdvancedEnchantmentsIntegration;
 import io.github.shiryu.spider.integration.skills.auraskills.AuraSkillsIntegration;
 import io.github.shiryu.spider.integration.world.WorldGuardIntegration;
 import lombok.Getter;
@@ -54,9 +53,6 @@ public class SpiderPlugin extends JavaPlugin {
 
         //Skills
         Registries.INTEGRATION.register("AuraSkills", AuraSkillsIntegration.class);
-
-        //Enchantments
-        Registries.INTEGRATION.register("AdvancedEnchantments", AdvancedEnchantmentsIntegration.class);
     }
 
 }
