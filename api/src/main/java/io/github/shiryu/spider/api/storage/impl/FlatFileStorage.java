@@ -121,4 +121,14 @@ public class FlatFileStorage<T> implements Storage<T> {
 
         return this.all.get(uuid);
     }
+
+    @Override
+    public Map<UUID, T> getAll() {
+        for (final UUID uuid : this.connection.getFiles().keySet()) {
+            if (!this.all.containsKey(uuid))
+                this.load(uuid);
+        }
+
+        return Map.copyOf(this.all);
+    }
 }
