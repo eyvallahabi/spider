@@ -27,6 +27,17 @@ public class FlatFileConnection implements StorageConnection {
         return ConnectionType.FLAT_FILE;
     }
 
+    public boolean contains(@NotNull final UUID uuid){
+        final File parent = new File(this.plugin.getDataFolder(), this.name + "/");
+
+        if (!parent.exists())
+            parent.mkdirs();
+
+        final File file = new File(parent, uuid.toString() + ".yml");
+
+        return file.exists();
+    }
+
     @NotNull
     public File create( @NotNull final UUID uuid) {
         final File parent = new File(this.plugin.getDataFolder(), this.name + "/");

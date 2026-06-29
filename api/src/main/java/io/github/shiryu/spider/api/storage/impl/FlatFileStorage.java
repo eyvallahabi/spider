@@ -41,10 +41,14 @@ public class FlatFileStorage<T> implements Storage<T> {
 
             final UUID uuid = (UUID) idField.get(object);
 
-            final File file = this.connection.getFiles().get(uuid);
+            File file = this.connection.getFiles().get(uuid);
 
-            if (file == null)
-                throw new RuntimeException("No file found for object " + object.getClass().getSimpleName() + " with id " + uuid);
+            if (file == null){
+                if (!this.connection.contains(uuid))
+                    file = this.connection.create(uuid);
+                else
+                    throw new RuntimeException("Failed to create file for object " + object.getClass().getSimpleName() + " with id " + uuid);
+            }
 
             final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
